@@ -1,7 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
-import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
