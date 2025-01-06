@@ -1,0 +1,34 @@
+package com.codingshuttle.projects.airBnbApp.Entity;
+
+import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@Table(
+        name="tbl_User",
+        catalog = "HotelManagementSystem",
+        schema="dbo"
+)
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true,nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    private String name;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Roles> roles;
+}
