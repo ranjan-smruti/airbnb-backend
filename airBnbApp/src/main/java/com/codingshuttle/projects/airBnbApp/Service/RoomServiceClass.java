@@ -1,6 +1,5 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
-import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
 import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
@@ -60,18 +59,31 @@ public class RoomServiceClass implements RoomService {
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
         return hotel.getRooms()
                 .stream()
-                .map((element)->modelMapper.map(element,RoomDto.class))
+                .map(room->{
+                    try{
+                        RoomDto responseDto = modelMapper.map(room, RoomDto.class);
+                        responseDto.setImages(Arrays.asList(objectMapper.readValue(room.getImages(), String[].class)));
+                        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(room.getAmenities(), String[].class)));
+                        return responseDto;
+                    }catch(JsonProcessingException e){
+                        log.error("Error parsing JSON for room: {}", room.getId(), e);
+                        throw new RuntimeException("Error parsing room JSON fields", e);
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public RoomDto getRoomById(Long id) {
+    public RoomDto getRoomById(Long id) throws JsonProcessingException {
         log.info("Fetching room with id: {}", id);
         Room room = roomRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Room not found with id " + id));
 
-        return modelMapper.map(room, RoomDto.class);
+        RoomDto responseDto = modelMapper.map(room,RoomDto.class);
+        responseDto.setImages(Arrays.asList(objectMapper.readValue(room.getImages(), String[].class)));
+        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(room.getAmenities(), String[].class)));
+        return responseDto;
     }
 
     @Override

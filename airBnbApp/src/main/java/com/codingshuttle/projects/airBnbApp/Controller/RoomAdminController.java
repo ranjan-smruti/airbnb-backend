@@ -31,7 +31,7 @@ public class RoomAdminController {
 
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable Long hotelId,
-                                               @PathVariable Long roomId){
+                                               @PathVariable Long roomId) throws JsonProcessingException {
         return ResponseEntity.ok(roomService.getRoomById(roomId));
     }
 
