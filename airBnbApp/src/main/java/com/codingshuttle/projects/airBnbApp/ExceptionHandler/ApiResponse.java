@@ -8,8 +8,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class ApiError {
+public class ApiResponse {
     private HttpStatus status;
-    private String errorMessage;
+    private String msg;
     private List<String> subErrors;
 }

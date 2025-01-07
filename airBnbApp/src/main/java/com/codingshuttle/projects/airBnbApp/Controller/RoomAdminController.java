@@ -1,6 +1,8 @@
 package com.codingshuttle.projects.airBnbApp.Controller;
 
 import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
+import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
 import com.codingshuttle.projects.airBnbApp.Service.RoomService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +38,17 @@ public class RoomAdminController {
     }
 
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<RoomDto> deleteRoomById(@PathVariable Long hotelId,
-                                               @PathVariable Long roomId){
+    public ResponseEntity<APIResponse<?>> deleteRoomById(@PathVariable Long hotelId,
+                                                         @PathVariable Long roomId){
         roomService.deleteRoomById(roomId);
-        return ResponseEntity.noContent().build();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK)
+                .msg("Room deleted successfully with id " + roomId)
+                .build();
+        return buildResponseEntity(apiResponse);
+    }
+
+    private ResponseEntity<APIResponse<?>> buildResponseEntity(ApiResponse apiResponse) {
+        return new ResponseEntity<>(new APIResponse<>(apiResponse),apiResponse.getStatus());
     }
 }

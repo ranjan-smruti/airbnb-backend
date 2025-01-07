@@ -1,6 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler;
 
-import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiError;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
 import lombok.Data;
 
 import java.time.Instant;
@@ -12,7 +12,7 @@ public class APIResponse<T> {
     //private LocalDateTime timestamp;
     private Long timestamp;
     private T data;
-    private ApiError error;
+    private ApiResponse msg;
 
     public APIResponse(){
         Instant instant = LocalDateTime.now().toInstant(ZoneOffset.UTC);
@@ -24,8 +24,8 @@ public class APIResponse<T> {
         this.data = data;
     }
 
-    public APIResponse(ApiError error){
+    public APIResponse(ApiResponse msg){
         this();
-        this.error = error;
+        this.msg = msg;
     }
 }

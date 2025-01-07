@@ -1,5 +1,7 @@
 package com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler;
 
+import java.util.List;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -17,8 +19,13 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if(body instanceof APIResponse<?>)
-        {
+        List<String> allowedRoutes = List.of("/v3/api-docs", "/actuator");
+
+        boolean isAllowed = allowedRoutes
+                .stream()
+                .anyMatch(route -> request.getURI().getPath().contains(route));
+
+        if(body instanceof APIResponse<?> || isAllowed) {
             return body;
         }
         return  new APIResponse<>(body);

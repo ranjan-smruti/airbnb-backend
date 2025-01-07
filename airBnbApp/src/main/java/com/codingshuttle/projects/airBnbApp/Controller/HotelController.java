@@ -1,6 +1,8 @@
 package com.codingshuttle.projects.airBnbApp.Controller;
 
 import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
+import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
 import com.codingshuttle.projects.airBnbApp.Service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +41,26 @@ public class HotelController {
     }
 
     @DeleteMapping(path="/{hotelId}")
-    public ResponseEntity<Void> deleteHotelById(@PathVariable Long hotelId){
+    public ResponseEntity<APIResponse<?>> deleteHotelById(@PathVariable Long hotelId){
        hotelService.deleteHotelById(hotelId);
-        return ResponseEntity.noContent().build();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK)
+                .msg("Hotel deleted successfully with id " + hotelId)
+                .build();
+        return buildResponseEntity(apiResponse);
     }
 
     @PatchMapping("/{hotelId}")
-    public ResponseEntity<Void> activateHotel(@PathVariable Long hotelId){
+    public ResponseEntity<APIResponse<?>> activateHotel(@PathVariable Long hotelId){
         hotelService.activateHotel(hotelId);
-        return ResponseEntity.noContent().build();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK)
+                .msg("Hotel with id " + hotelId + " is now active")
+                .build();
+        return buildResponseEntity(apiResponse);
+    }
+
+    private ResponseEntity<APIResponse<?>> buildResponseEntity(ApiResponse apiResponse) {
+        return new ResponseEntity<>(new APIResponse<>(apiResponse),apiResponse.getStatus());
     }
 }

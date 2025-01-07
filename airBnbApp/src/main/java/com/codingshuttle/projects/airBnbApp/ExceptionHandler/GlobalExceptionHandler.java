@@ -16,10 +16,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<APIResponse<?>> handleEmployeeNotFound(ResourceNotFoundException ex){
-        ApiError apiError = ApiError
+        ApiResponse apiError = ApiResponse
                 .builder()
                 .status(HttpStatus.NOT_FOUND)
-                .errorMessage(ex.getMessage())
+                .msg(ex.getMessage())
                 .build();
         return buildErrorResponseEntity(apiError);
     }
@@ -27,10 +27,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse<?>> internalServerError(Exception exception)
     {
-        ApiError apiError = ApiError
+        ApiResponse apiError = ApiResponse
                 .builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .errorMessage(exception.getMessage())
+                .msg(exception.getMessage())
                 .build();
         return buildErrorResponseEntity(apiError);
     }
@@ -45,16 +45,16 @@ public class GlobalExceptionHandler {
                 .map(error->error.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        ApiError apiError = ApiError.builder()
+        ApiResponse apiError = ApiResponse.builder()
                 .status(HttpStatus.BAD_REQUEST)
-                .errorMessage("Input validation failed")
+                .msg("Input validation failed")
                 .subErrors(errors)
                 .build();
 
         return buildErrorResponseEntity(apiError);
     }
 
-    private ResponseEntity<APIResponse<?>> buildErrorResponseEntity(ApiError apiError) {
+    private ResponseEntity<APIResponse<?>> buildErrorResponseEntity(ApiResponse apiError) {
         return new ResponseEntity<>(new APIResponse<>(apiError),apiError.getStatus());
     }
 }

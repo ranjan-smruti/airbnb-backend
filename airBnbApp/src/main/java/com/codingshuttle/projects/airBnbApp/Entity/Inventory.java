@@ -1,12 +1,14 @@
 package com.codingshuttle.projects.airBnbApp.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.beans.BeanInfo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,11 +18,14 @@ import java.time.LocalDate;
         catalog = "HotelManagementSystem",
         schema="dbo",
         uniqueConstraints= {
-                @UniqueConstraint(name = "unique_hotel", columnNames = "hotel_id"),
-                @UniqueConstraint(name = "unique_room", columnNames = "room_id"),
-                @UniqueConstraint(name = "unique_date", columnNames = "date")
+                //@UniqueConstraint(name = "unique_hotel", columnNames = "hotel_id"),
+                //@UniqueConstraint(name = "unique_room", columnNames = "room_id"),
+                //@UniqueConstraint(name = "unique_date", columnNames = "date")
         }
 )
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,4 +59,10 @@ public class Inventory {
 
     @Column(nullable = false)
     private Boolean closed; //indicates particular room in not avaliable for the date.
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
