@@ -14,15 +14,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(
-        name="tbl_Inventory",
-        catalog = "HotelManagementSystem",
-        schema="dbo",
-        uniqueConstraints= {
-                //@UniqueConstraint(name = "unique_hotel", columnNames = "hotel_id"),
-                //@UniqueConstraint(name = "unique_room", columnNames = "room_id"),
-                //@UniqueConstraint(name = "unique_date", columnNames = "date")
-        }
-)
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_hotel_room_date",
+                columnNames = {"hotel_id", "room_id", "date"}
+        ))
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,6 +39,9 @@ public class Inventory {
 
     @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
     private Integer bookedCount;
+
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    private Integer reservedCount;
 
     @Column(nullable = false)
     private Integer totalCount;

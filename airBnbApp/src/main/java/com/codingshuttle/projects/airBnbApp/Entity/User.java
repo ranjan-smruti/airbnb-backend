@@ -10,11 +10,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Table(
-        name="tbl_User",
-        catalog = "HotelManagementSystem",
-        schema="dbo"
-)
+@Table(name = "app_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

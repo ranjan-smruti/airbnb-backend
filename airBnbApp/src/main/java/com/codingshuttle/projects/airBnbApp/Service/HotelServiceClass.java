@@ -1,11 +1,13 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
+import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoDto;
+import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelRepository;
+import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -23,61 +25,41 @@ public class HotelServiceClass implements HotelService{
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
+    private final RoomRepository roomRepository;
 
     @Autowired
     ObjectMapper objectMapper;
 
     @Override
-    public HotelDto createNewHotel(HotelDto hotelDto) throws JsonProcessingException {
+    public HotelDto createNewHotel(HotelDto hotelDto){
         log.info("Creating new hotel with name: {}",hotelDto.getName());
         Hotel hotel = modelMapper.map(hotelDto,Hotel.class);
         hotel.setActive(false);
-        //get the list of images and amenities.
-        hotel.setImages(objectMapper.writeValueAsString(hotelDto.getImages()));
-        hotel.setAmenities(objectMapper.writeValueAsString(hotelDto.getAmenities()));
 
         hotel = hotelRepository.save(hotel);
         log.info("Created a new hotel with id: {} name: {}",hotel.getId(), hotel.getName());
 
-        HotelDto responseDto = modelMapper.map(hotel,HotelDto.class);
-        //Reading images and amenities
-        responseDto.setImages(Arrays.asList(objectMapper.readValue(hotel.getImages(), String[].class)));
-        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(hotel.getAmenities(), String[].class)));
-        return responseDto;
+        return modelMapper.map(hotel,HotelDto.class);
     }
 
     @Override
-    public HotelDto getHotelById(Long id) throws JsonProcessingException {
+    public HotelDto getHotelById(Long id){
         log.info("Getting hotel with id: {}",id);
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel no found with id: "+id));
-
-        HotelDto responseDto = modelMapper.map(hotel,HotelDto.class);
-        //Reading images and amenities
-        responseDto.setImages(Arrays.asList(objectMapper.readValue(hotel.getImages(), String[].class)));
-        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(hotel.getAmenities(), String[].class)));
-
-        return responseDto;
+        return modelMapper.map(hotel,HotelDto.class);
     }
 
     @Override
-    public HotelDto updateHotelById(Long id, HotelDto hotelDto) throws JsonProcessingException {
+    public HotelDto updateHotelById(Long id, HotelDto hotelDto){
         log.info("Updating the hotel with ID: {}",id);
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
         modelMapper.map(hotelDto,hotel);    //mapping the dto to hotel entity
         hotel.setId(id);
-        //get the list of images and amenities.
-        hotel.setImages(objectMapper.writeValueAsString(hotelDto.getImages()));
-        hotel.setAmenities(objectMapper.writeValueAsString(hotelDto.getAmenities()));
         hotel = hotelRepository.save(hotel);
-
-        HotelDto responseDto = modelMapper.map(hotel,HotelDto.class);
-        //Reading images and amenities
-        responseDto.setImages(Arrays.asList(objectMapper.readValue(hotel.getImages(), String[].class)));
-        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(hotel.getAmenities(), String[].class)));
-        return responseDto;
+        return modelMapper.map(hotel,HotelDto.class);
     }
 
     @Override
@@ -86,11 +68,13 @@ public class HotelServiceClass implements HotelService{
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
-        hotelRepository.deleteById(id);
 
         for(Room room: hotel.getRooms()){
-            inventoryService.deleteFutureInventories(room);
+            inventoryService.deleteAllInventories(room);
+            roomRepository.deleteById(room.getId());
         }
+
+        hotelRepository.deleteById(id);
     }
 
     @Override
@@ -107,5 +91,19 @@ public class HotelServiceClass implements HotelService{
         for(Room room: hotel.getRooms()){
             inventoryService.initializeRoomForAYear(room);
         }
+    }
+
+    @Override
+    public HotelInfoDto getHotelInfoById(Long hotelId) {
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + hotelId));
+
+        List<RoomDto> rooms = hotel.getRooms()
+                .stream()
+                .map((element)->modelMapper.map(element,RoomDto.class))
+                .toList();
+
+        return new HotelInfoDto(modelMapper.map(hotel,HotelDto.class),rooms);
     }
 }

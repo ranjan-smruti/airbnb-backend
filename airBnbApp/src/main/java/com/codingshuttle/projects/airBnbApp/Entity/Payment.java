@@ -13,11 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(
-        name="tbl_Payment",
-        catalog = "HotelManagementSystem",
-        schema="dbo"
-)
+@Table(name="Payment")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +36,8 @@ public class Payment {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Booking booking;
 
 }

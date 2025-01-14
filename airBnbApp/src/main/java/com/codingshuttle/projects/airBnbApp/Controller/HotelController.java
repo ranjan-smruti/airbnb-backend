@@ -50,7 +50,7 @@ public class HotelController {
         return buildResponseEntity(apiResponse);
     }
 
-    @PatchMapping("/{hotelId}")
+    @PatchMapping("/{hotelId}/activate")
     public ResponseEntity<APIResponse<?>> activateHotel(@PathVariable Long hotelId){
         hotelService.activateHotel(hotelId);
         ApiResponse apiResponse = ApiResponse.builder()

@@ -12,11 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(
-        name="tbl_Hotel",
-        catalog = "HotelManagementSystem",
-        schema="dbo"
-)
+@Table(name="Hotel")
 public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +23,11 @@ public class Hotel {
 
     private String city;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String images;
+    @Column(columnDefinition = "TEXT[]")
+    private String[] photos;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String amenities;
+    @Column(columnDefinition = "TEXT[]")
+    private String[] amenities;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

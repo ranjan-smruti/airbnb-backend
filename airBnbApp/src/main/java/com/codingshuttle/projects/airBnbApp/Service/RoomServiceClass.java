@@ -32,62 +32,42 @@ public class RoomServiceClass implements RoomService {
     ObjectMapper objectMapper;
 
     @Override
-    public RoomDto createNewRoom(Long hotelId, RoomDto roomDto) throws JsonProcessingException {
-        log.info("Creating a new room with hotel id:{}", hotelId);
+    public RoomDto createNewRoom(Long hotelId, RoomDto roomDto){
+        log.info("Creating a new room in hotel with ID: {}", hotelId);
         Hotel hotel = hotelRepository
                 .findById(hotelId)
-                .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + hotelId));
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+hotelId));
         Room room = modelMapper.map(roomDto, Room.class);
         room.setHotel(hotel);
-        //get the list of images and amenities.
-        room.setImages(objectMapper.writeValueAsString(roomDto.getImages()));
-        room.setAmenities(objectMapper.writeValueAsString(roomDto.getAmenities()));
         room = roomRepository.save(room);
 
-        if(hotel.getActive()){
+        if (hotel.getActive()) {
             inventoryService.initializeRoomForAYear(room);
         }
 
-        //Reading images and amenities
-        RoomDto responseDto = modelMapper.map(room,RoomDto.class);
-        responseDto.setImages(Arrays.asList(objectMapper.readValue(room.getImages(), String[].class)));
-        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(room.getAmenities(), String[].class)));
-        return responseDto;
+        return modelMapper.map(room, RoomDto.class);
     }
 
     @Override
-    public List<RoomDto> getAllRoomsInHotel(Long id) {
-        log.info("Fetching all the rooms with hotel id: {}", id);
+    public List<RoomDto> getAllRoomsInHotel(Long hotelId) {
+        log.info("Getting all rooms in hotel with ID: {}", hotelId);
         Hotel hotel = hotelRepository
-                .findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+hotelId));
+
         return hotel.getRooms()
                 .stream()
-                .map(room->{
-                    try{
-                        RoomDto responseDto = modelMapper.map(room, RoomDto.class);
-                        responseDto.setImages(Arrays.asList(objectMapper.readValue(room.getImages(), String[].class)));
-                        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(room.getAmenities(), String[].class)));
-                        return responseDto;
-                    }catch(JsonProcessingException e){
-                        log.error("Error parsing JSON for room: {}", room.getId(), e);
-                        throw new RuntimeException("Error parsing room JSON fields", e);
-                    }
-                })
+                .map((element) -> modelMapper.map(element, RoomDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public RoomDto getRoomById(Long id) throws JsonProcessingException {
-        log.info("Fetching room with id: {}", id);
+    public RoomDto getRoomById(Long roomId) {
+        log.info("Getting the room with ID: {}", roomId);
         Room room = roomRepository
-                .findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Room not found with id " + id));
-
-        RoomDto responseDto = modelMapper.map(room,RoomDto.class);
-        responseDto.setImages(Arrays.asList(objectMapper.readValue(room.getImages(), String[].class)));
-        responseDto.setAmenities(Arrays.asList(objectMapper.readValue(room.getAmenities(), String[].class)));
-        return responseDto;
+                .findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
+        return modelMapper.map(room, RoomDto.class);
     }
 
     @Override
@@ -97,7 +77,7 @@ public class RoomServiceClass implements RoomService {
         Room room = roomRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Room not found with id " + id));
-        inventoryService.deleteFutureInventories(room);
+        inventoryService.deleteAllInventories(room);
         roomRepository.deleteById(id);
 
     }

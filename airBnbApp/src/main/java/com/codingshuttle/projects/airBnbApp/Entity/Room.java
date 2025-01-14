@@ -12,11 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(
-        name="tbl_Room",
-        catalog = "HotelManagementSystem",
-        schema="dbo"
-)
+@Table(name="Room")
 public class Room {
 
     @Id
@@ -34,11 +30,11 @@ public class Room {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal basePrice;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String images;
+    @Column(columnDefinition = "TEXT[]")
+    private String[] photos;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String amenities;
+    @Column(columnDefinition = "TEXT[]")
+    private String[] amenities;
 
     @Column(nullable = false)
     private Integer totalCount;
