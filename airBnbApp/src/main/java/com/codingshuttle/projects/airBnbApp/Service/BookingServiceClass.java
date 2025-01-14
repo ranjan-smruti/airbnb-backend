@@ -102,6 +102,7 @@ public class BookingServiceClass implements BookingService {
     }
 
     public boolean hasBookingExpired(Booking booking){
+        //Booking only active for 10 minutes.
         return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
     }
 
