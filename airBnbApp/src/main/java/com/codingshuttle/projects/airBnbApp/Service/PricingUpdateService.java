@@ -34,8 +34,8 @@ public class PricingUpdateService {
     private final HotelMinPriceRepository hotelMinPriceRepository;
     private final PricingService pricingService;
 
-//    @Scheduled(cron="*/5 * * * * *") //Every hour
-    @Scheduled(cron="0 */30 * * * *") //Every 30min
+//    @Scheduled(cron="*/5 * * * * *") //Every 5sec
+    @Scheduled(cron="0 0 * * * *") //Every 1 hour
     public void updatePrices(){
         int page = 0;
         int batchSize = 100;
@@ -58,9 +58,12 @@ public class PricingUpdateService {
         LocalDate endDate = LocalDate.now().plusYears(1);
 
         List<Inventory> inventoryList = inventoryRepository.findByHotelAndDateBetween(hotel,startDate,endDate);
+
+        //individual room prices for a day will be get updated in inventory table
         updateInventoryPrices(inventoryList);
+
+        //avg minimum room price of a hotel of a particular day will get updated in the hotel_min_price table
         updateHotelMinPrices(hotel, inventoryList, startDate,endDate);
-        
     }
 
     private void updateHotelMinPrices(Hotel hotel, List<Inventory> inventoryList, LocalDate startDate, LocalDate endDate) {
