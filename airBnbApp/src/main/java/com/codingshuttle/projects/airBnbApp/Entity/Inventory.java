@@ -50,7 +50,7 @@ public class Inventory {
     private BigDecimal surgeFactor;
 
     @Column(nullable = false, precision = 10,scale = 2)
-    private BigDecimal price; //base price*surgeFactor
+    private BigDecimal price; //price of the einventory of that particular day.
 
     @Column(nullable = false)
     private String city;

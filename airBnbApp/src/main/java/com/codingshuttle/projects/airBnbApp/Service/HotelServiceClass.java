@@ -85,6 +85,10 @@ public class HotelServiceClass implements HotelService{
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
 
+        if(hotel.getActive()){
+            throw new ResourceNotFoundException("Hotel is already active");
+        }
+
         hotel.setActive(true);
 
         //assuming only do it once when hotel is first time activated.
