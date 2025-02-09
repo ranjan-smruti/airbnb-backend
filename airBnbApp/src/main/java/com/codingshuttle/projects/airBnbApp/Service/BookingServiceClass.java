@@ -5,12 +5,14 @@ import com.codingshuttle.projects.airBnbApp.DTO.BookingRequest;
 import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
 import com.codingshuttle.projects.airBnbApp.Entity.*;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.BookingStatus;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.UnauthorizedException;
 import com.codingshuttle.projects.airBnbApp.Repository.*;
 import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
@@ -81,6 +83,12 @@ public class BookingServiceClass implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(()->
                 new ResourceNotFoundException("No bookings found with id: " + bookingId));
 
+        User user = getCurrentUser();
+
+        if(user.equals(booking.getUser())){
+            throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
+        }
+
         if(hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has already expired!!");
         }
@@ -91,7 +99,7 @@ public class BookingServiceClass implements BookingService {
 
         for(GuestDto guestDto: guestDtoList){
             Guest guest = modelMapper.map(guestDto, Guest.class);
-            guest.setUser(getCurrentUser());
+            guest.setUser(user);
             guest = guestRepository.save(guest);
             booking.getGuests().add(guest);
         }
@@ -108,8 +116,6 @@ public class BookingServiceClass implements BookingService {
     }
 
     public User getCurrentUser(){
-        User user = new User();
-        user.setId(1L); //TODO: REMOVE DUMMY.
-        return user;
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

@@ -1,8 +1,12 @@
 package com.codingshuttle.projects.airBnbApp.ExceptionHandler;
 
 import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -35,6 +39,16 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(apiError);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<APIResponse<?>> badCredentialsError(BadCredentialsException exception){
+        ApiResponse apiError = ApiResponse
+                .builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .msg(exception.getMessage())
+                .build();
+        return buildErrorResponseEntity(apiError);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIResponse<?>> handleInputValidationError(MethodArgumentNotValidException exception)
     {
@@ -51,6 +65,33 @@ public class GlobalExceptionHandler {
                 .subErrors(errors)
                 .build();
 
+        return buildErrorResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<APIResponse<?>> handleAuthenticationException(AuthenticationException ex) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .msg(ex.getMessage())
+                .build();
+        return buildErrorResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<APIResponse<?>> handleJwtException(JwtException ex) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .msg(ex.getMessage())
+                .build();
+        return buildErrorResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<APIResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.FORBIDDEN)
+                .msg(ex.getMessage())
+                .build();
         return buildErrorResponseEntity(apiError);
     }
 
