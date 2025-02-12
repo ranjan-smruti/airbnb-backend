@@ -3,7 +3,7 @@ package com.codingshuttle.projects.airBnbApp.Controller;
 import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
 import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
-import com.codingshuttle.projects.airBnbApp.Service.RoomService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.RoomService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

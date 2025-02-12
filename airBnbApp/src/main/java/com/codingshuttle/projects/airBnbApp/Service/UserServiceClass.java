@@ -2,6 +2,7 @@ package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.Entity.User;
 import com.codingshuttle.projects.airBnbApp.Repository.UserRepository;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.UserService;
 import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

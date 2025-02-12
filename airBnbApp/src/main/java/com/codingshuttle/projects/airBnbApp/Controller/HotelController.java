@@ -3,15 +3,13 @@ package com.codingshuttle.projects.airBnbApp.Controller;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
 import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
-import com.codingshuttle.projects.airBnbApp.Service.HotelService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.sound.midi.VoiceStatus;
 
 @RestController
 @RequestMapping(path = "/admin/hotels")

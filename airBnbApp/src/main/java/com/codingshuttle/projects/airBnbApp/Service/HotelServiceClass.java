@@ -9,6 +9,8 @@ import com.codingshuttle.projects.airBnbApp.Entity.User;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.UnauthorizedException;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
 import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -24,7 +26,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class HotelServiceClass implements HotelService{
+public class HotelServiceClass implements HotelService {
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;

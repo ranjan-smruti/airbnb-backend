@@ -1,17 +1,14 @@
 package com.codingshuttle.projects.airBnbApp.Controller;
 
-import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelSearchRequest;
-import com.codingshuttle.projects.airBnbApp.Service.HotelService;
-import com.codingshuttle.projects.airBnbApp.Service.InventoryService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/hotels")

@@ -1,7 +1,7 @@
 package com.codingshuttle.projects.airBnbApp.Security;
 
 import com.codingshuttle.projects.airBnbApp.Entity.User;
-import com.codingshuttle.projects.airBnbApp.Service.UserService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
