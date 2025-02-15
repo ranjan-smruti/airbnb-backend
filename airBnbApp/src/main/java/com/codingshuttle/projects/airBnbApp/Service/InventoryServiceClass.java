@@ -2,22 +2,33 @@ package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelSearchRequest;
+import com.codingshuttle.projects.airBnbApp.DTO.InventoryDTO;
+import com.codingshuttle.projects.airBnbApp.DTO.UpdateInventoryRequestDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
+import com.codingshuttle.projects.airBnbApp.Entity.User;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelMinPriceRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.InventoryRepository;
+import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
+import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +37,7 @@ public class InventoryServiceClass implements InventoryService {
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
     private final HotelMinPriceRepository hotelMinPriceRepository;
+    private final RoomRepository roomRepository;
 
     @Override
     public void initializeRoomForAYear(Room room){
@@ -76,5 +88,38 @@ public class InventoryServiceClass implements InventoryService {
                 dateCount, pageable);
 
         return hotelPage;
+    }
+
+    @Override
+    public List<InventoryDTO> getAllInventoryByRoom(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(()->new ResourceNotFoundException("Room not found with id "+roomId));
+
+        User user = getCurrentUser();
+
+        if(!user.equals(room.getHotel().getOwner())) throw new AccessDeniedException("No access to the resources for hotel "+room.getHotel().getId());
+
+        return inventoryRepository.findByRoomOrderByDate(room)
+                .stream()
+                .map((element)->modelMapper.map(element, InventoryDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateInventory(Long roomId, UpdateInventoryRequestDTO updateInventoryRequestDTO) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(()->new ResourceNotFoundException("Room not found with id "+roomId));
+
+        User user = getCurrentUser();
+
+        if(!user.equals(room.getHotel().getOwner())) throw new AccessDeniedException("No access to the resources for hotel "+room.getHotel().getId());
+
+        inventoryRepository.getInventoryAndLockBeforeUpdate(roomId,updateInventoryRequestDTO.getStartDate(),updateInventoryRequestDTO.getEndDate());
+
+        inventoryRepository.updateInventory(roomId,updateInventoryRequestDTO.getStartDate(),
+                updateInventoryRequestDTO.getEndDate(), updateInventoryRequestDTO.getClosed(),
+                updateInventoryRequestDTO.getSurgeFactor());
+
     }
 }

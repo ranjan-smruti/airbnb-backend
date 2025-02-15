@@ -1,5 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
+import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
 import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
 
 @Service
 @Slf4j
@@ -82,6 +85,30 @@ public class RoomServiceClass implements RoomService {
         Room room = roomRepository
                 .findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
+        return modelMapper.map(room, RoomDto.class);
+    }
+
+    @Override
+    public RoomDto updateRoomById(Long hotelId, Long roomId, RoomDto roomDto) {
+        log.info("Updating the room with ID: {}",roomId);
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + hotelId));
+
+        User user = getCurrentUser();
+        if(!user.equals(hotel.getOwner()))
+        {
+            throw new UnauthorizedException("This user doesn't own this hotel with id "+hotelId);
+        }
+
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
+
+        modelMapper.map(roomDto,room);    //mapping the dto to hotel entity
+        room.setId(roomId);
+
+        //TODO: if price or inventory is updated, then update the inventory for this room.
+
+        room = roomRepository.save(room);
         return modelMapper.map(room, RoomDto.class);
     }
 

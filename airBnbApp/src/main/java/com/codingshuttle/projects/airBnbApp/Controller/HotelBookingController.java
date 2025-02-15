@@ -1,7 +1,7 @@
 package com.codingshuttle.projects.airBnbApp.Controller;
 
 import com.codingshuttle.projects.airBnbApp.DTO.BookingDto;
-import com.codingshuttle.projects.airBnbApp.DTO.BookingRequest;
+import com.codingshuttle.projects.airBnbApp.DTO.BookingRequestDTO;
 import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.BookingService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public class HotelBookingController {
     private final BookingService bookingService;
 
     @PostMapping("/init")
-    public ResponseEntity<BookingDto> initializeBooking(@RequestBody BookingRequest bookingRequest){
-        return ResponseEntity.ok(bookingService.initializeBooking(bookingRequest));
+    public ResponseEntity<BookingDto> initializeBooking(@RequestBody BookingRequestDTO bookingRequestDTO){
+        return ResponseEntity.ok(bookingService.initializeBooking(bookingRequestDTO));
     }
 
     @PostMapping("/{bookingId}/addGuests")

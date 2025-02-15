@@ -1,16 +1,14 @@
 package com.codingshuttle.projects.airBnbApp.Service.interfaces;
 
-import com.codingshuttle.projects.airBnbApp.DTO.BookingDto;
-import com.codingshuttle.projects.airBnbApp.DTO.BookingRequest;
-import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
+import com.codingshuttle.projects.airBnbApp.DTO.*;
 import com.stripe.model.Event;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public interface BookingService {
 
-    BookingDto initializeBooking(BookingRequest bookingRequest);
+    BookingDto initializeBooking(BookingRequestDTO bookingRequestDTO);
 
     BookingDto addGuests(Long bookingId, List<GuestDto> guestDtoList);
 
@@ -21,4 +19,10 @@ public interface BookingService {
     void cancelBooking(Long bookingId);
 
     String getBookingStatus(Long bookingId);
+
+    List<BookingDto> getAllBookingsByHotelId(Long hotelId);
+
+    List<HotelReportDTO> getReportByHotelId(Long hotelId, LocalDate startDate, LocalDate endDate);
+
+    List<BookingDto> getBookings();
 }
