@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
 
 @Service
@@ -38,7 +40,7 @@ public class UserServiceClass implements UserService, UserDetailsService {
         if(profileUpdateRequestDTO.getDateOfBirth() != null) user.setDateOfBirth(profileUpdateRequestDTO.getDateOfBirth());
         if(profileUpdateRequestDTO.getGender() != null) user.setGender(profileUpdateRequestDTO.getGender());
         if(profileUpdateRequestDTO.getName() != null) user.setName(profileUpdateRequestDTO.getName());
-        //also check for the role.
+        if(profileUpdateRequestDTO.getRoles() != null) user.setRoles(profileUpdateRequestDTO.getRoles());
 
         userRepository.save(user);
     }

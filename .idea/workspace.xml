@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d3477ba-c8bc-4558-8368-583173b62675" name="Changes" comment="" />
+    <list default="true" id="1d3477ba-c8bc-4558-8368-583173b62675" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Controller/ProfileUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Controller/ProfileUpdateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Service/UserServiceClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Service/UserServiceClass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/airBnbApp/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/airBnbApp/src/main/resources/application.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,21 +18,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "ranjan-smruti"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ranjan-smruti&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
-    "url": "https://github.com/ranjan-smruti/Airbnb_HotelManagementSystem.git",
+    "url": "https://github.com/ranjan-smruti/airbnb-backend.git",
     "accountId": "3d8a0350-3728-44c4-b095-a253790e273f"
   }
 }]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2sqSsZnkQyeBfPMNBddTOVVX0fY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -41,7 +46,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/java/Spring_FrameWork/Airbnb_HotelManagementSystem"
+    "last_opened_file_path": "D:/study-docs/java/spring-boot-projects/airbnb/airbnb-backend"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
