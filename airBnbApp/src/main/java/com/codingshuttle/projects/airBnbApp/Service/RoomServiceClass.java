@@ -45,7 +45,7 @@ public class RoomServiceClass implements RoomService {
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+hotelId));
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(hotel.getOwner()))
+        if(!user.equals(hotel.getOwner()))
         {
             throw new UnauthorizedException("This user doesn't own this hotel with id "+hotelId);
         }
@@ -68,7 +68,7 @@ public class RoomServiceClass implements RoomService {
                 .findById(hotelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+hotelId));
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(hotel.getOwner()))
+        if(!user.equals(hotel.getOwner()))
         {
             throw new UnauthorizedException("This user doesn't own this hotel with id "+hotelId);
         }
@@ -121,7 +121,7 @@ public class RoomServiceClass implements RoomService {
                 .orElseThrow(()->new ResourceNotFoundException("Room not found with id " + id));
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.equals(room.getHotel().getOwner()))
+        if(!user.equals(room.getHotel().getOwner()))
         {
             throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
         }
