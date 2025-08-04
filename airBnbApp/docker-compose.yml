@@ -1,0 +1,39 @@
+services:
+  airbnb-db:
+    image: postgres:16-alpine
+    container_name: airbnb-db
+    environment:
+      POSTGRES_DB: HotelMgmtDB
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Root@123
+    ports:
+      - "5432:5432"         # Expose as localhost:5434
+    networks:
+      - airbnb-app
+    volumes:
+      - pgdata_Hotel:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg-admin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    networks:
+      - airbnb-app
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: Root@123
+    ports:
+      - "5050:80"          # Host:  localhost:5050 --> container’s 80
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  pgadmin_data:
+  pgdata_Hotel:
+
+networks:
+  airbnb-app:
