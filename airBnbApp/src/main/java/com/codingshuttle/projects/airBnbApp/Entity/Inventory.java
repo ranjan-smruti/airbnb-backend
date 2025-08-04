@@ -50,13 +50,13 @@ public class Inventory {
     private BigDecimal surgeFactor;
 
     @Column(nullable = false, precision = 10,scale = 2)
-    private BigDecimal price; //price of the einventory of that particular day.
+    private BigDecimal price; //price of the inventory of that particular day.
 
     @Column(nullable = false)
     private String city;
 
     @Column(nullable = false)
-    private Boolean closed; //indicates particular room in not avaliable for the date.
+    private Boolean closed; //indicates particular room in not available for the date.
 
     @CreationTimestamp
     private LocalDateTime createdAt;
