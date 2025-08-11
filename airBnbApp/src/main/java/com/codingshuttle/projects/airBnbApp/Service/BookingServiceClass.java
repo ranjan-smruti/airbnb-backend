@@ -30,6 +30,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
@@ -106,7 +107,7 @@ public class BookingServiceClass implements BookingService {
 
         User user = getCurrentUser();
 
-        if(!user.equals(booking.getUser())){
+        if(!Objects.equals(user.getId(), booking.getUser().getId())){
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
 
@@ -138,7 +139,7 @@ public class BookingServiceClass implements BookingService {
         );
 
         User user = getCurrentUser();
-        if(!user.equals(booking.getUser())){
+        if(!Objects.equals(user.getId(), booking.getUser().getId())){
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
 
@@ -190,7 +191,7 @@ public class BookingServiceClass implements BookingService {
         );
 
         User user = getCurrentUser();
-        if(!user.equals(booking.getUser())){
+        if(!Objects.equals(user.getId(), booking.getUser().getId())){
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
 
@@ -228,7 +229,7 @@ public class BookingServiceClass implements BookingService {
         );
 
         User user = getCurrentUser();
-        if(!user.equals(booking.getUser())){
+        if(!Objects.equals(user.getId(), booking.getUser().getId())){
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
         return booking.getBookingStatus().name();
