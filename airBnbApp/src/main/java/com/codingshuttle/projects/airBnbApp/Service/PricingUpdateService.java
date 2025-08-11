@@ -69,6 +69,7 @@ public class PricingUpdateService {
     private void updateHotelMinPrices(Hotel hotel, List<Inventory> inventoryList, LocalDate startDate, LocalDate endDate) {
         //Compute minimum price per day for the hotel
         Map<LocalDate,BigDecimal> dailyPrice = inventoryList.stream()
+                .filter(inv -> !inv.getDate().isBefore(startDate) && !inv.getDate().isAfter(endDate))
                 .collect(Collectors.groupingBy(
                         Inventory::getDate,
                         Collectors.mapping(Inventory::getPrice, Collectors.minBy(Comparator.naturalOrder()))
