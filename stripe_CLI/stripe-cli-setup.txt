@@ -1,0 +1,38 @@
+For Windows
+===========
+1. Open PowerShell in the Stripe CLI Directory
+   Navigate to the folder where stripe.exe is located.
+   Right-click inside the folder and choose Open in Terminal or Open PowerShell window here.
+
+2. Log in to Stripe
+   Run: .\stripe.exe login
+
+   This will open a browser login page. Press Enter when prompted, then log in to your Stripe account.
+
+3. Authorize the CLI
+   After logging in, a pairing code will appear in PowerShell.
+   Confirm the same code in your browser, then click Allow to complete pairing.
+
+4. Listen to Stripe Webhook Events
+   To start listening and forward events to your app, run:
+   Run: .\stripe.exe listen --forward-to <path-to-your-webhook-endpoint>
+   Example: .\stripe.exe listen --forward-to localhost:8080/api/v1/webhook/payment
+
+For macOS (via Homebrew)
+========================
+1. Install Stripe CLI
+    Open Terminal and run:
+    brew install stripe/stripe-cli/stripe
+
+2 Log in to Stripe
+    Run: stripe login
+    This will open a browser login page. Press Enter when prompted, then log in to your Stripe account.
+
+3. Authorize the CLI
+    After logging in, a pairing code will appear in Terminal.
+    Confirm the same code in your browser, then click Allow to complete pairing.
+
+4. Listen to Stripe Webhook Events
+    To start listening and forward events to your app.
+    Run: stripe listen --forward-to <path-to-your-webhook-endpoint>
+    Example: stripe listen --forward-to localhost:8080/api/v1/webhook/payment

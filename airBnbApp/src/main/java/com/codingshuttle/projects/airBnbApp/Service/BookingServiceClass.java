@@ -147,7 +147,9 @@ public class BookingServiceClass implements BookingService {
             throw new IllegalStateException("Booking has already expired!!");
         }
 
-        String sessionUrl = checkOutService.getCheckoutSession(booking, frontEndUrl+"/payments/success", frontEndUrl+"/payments/failure");
+        String sessionUrl = checkOutService.getCheckoutSession(booking,
+                frontEndUrl+"/payments/" +bookingId +"/status",
+                frontEndUrl+"/payments/" +bookingId +"/status");
 
         booking.setBookingStatus(BookingStatus.PAYMENT_PENDING);
         bookingRepository.save(booking);
