@@ -1,19 +1,42 @@
 services:
+  airbnb-app:
+    image: smrutiranjanm/airbnbapp:0.0.1-SNAPSHOT
+    container_name: airbnb-app
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_SERVER: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${SERVER_PORT}:8080"
+    depends_on:
+      - airbnb-db
+#      - stripe-gateway
+    networks:
+      - airbnb-network
+
+  #stripe-gateway:
+
   airbnb-db:
     image: postgres:16-alpine
     container_name: airbnb-db
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: HotelMgmtDB
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: Root@123
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"         # Expose as localhost:5434
+      - "${DB_PORT}:5432"         # Expose as localhost:5432/${DB_PORT}
     networks:
-      - airbnb-app
+      - airbnb-network
     volumes:
       - pgdata_Hotel:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,13 +44,15 @@ services:
   pg-admin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin
+    env_file:
+      - .env
     networks:
-      - airbnb-app
+      - airbnb-network
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: Root@123
+      PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
     ports:
-      - "5050:80"          # Host:  localhost:5050 --> container’s 80
+      - "${PG_ADMIN_PORT}:80"          # Host:  localhost:5050 --> container’s 80
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
@@ -36,4 +61,4 @@ volumes:
   pgdata_Hotel:
 
 networks:
-  airbnb-app:
+  airbnb-network:

@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d3477ba-c8bc-4558-8368-583173b62675" name="Changes" comment="Design documents added.">
-      <change afterPath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Controller/PaymentPageController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/airBnbApp/src/main/resources/static/payments/status.html" afterDir="false" />
+    <list default="true" id="1d3477ba-c8bc-4558-8368-583173b62675" name="Changes" comment="Changes added for docker support.">
+      <change afterPath="$PROJECT_DIR$/airbnb-app/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/airbnb-app/src/main/resources/application-docker.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Service/BookingServiceClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Service/BookingServiceClass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Service/PricingUpdateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/airBnbApp/src/main/java/com/codingshuttle/projects/airBnbApp/Service/PricingUpdateService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stripe_CLI/document.txt" beforeDir="false" afterPath="$PROJECT_DIR$/stripe_CLI/stripe-cli-setup.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/airbnb-app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/airbnb-app/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/airbnb-app/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/airbnb-app/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stripe_CLI/stripe-cli-setup.txt" beforeDir="false" afterPath="$PROJECT_DIR$/stripe_CLI/stripe-cli-setup.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +36,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ranjan-smruti/airbnb-backend.git&quot;,
-    &quot;accountId&quot;: &quot;6b280116-318b-4b8d-83f2-23fba408ef33&quot;
+    &quot;accountId&quot;: &quot;3d8a0350-3728-44c4-b095-a253790e273f&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -51,22 +51,22 @@
     <option name="showLibraryContents" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.AirBnbAppApplication.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/msmrutiranjan/spring-boot-projects/airbnb-backend",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "terminal"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.AirBnbAppApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/study-docs/java/spring-boot-projects/airbnb/airbnb-backend&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/airBnbApp/src/main/resources/static/payments" />
@@ -137,7 +137,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755187531185</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Changes added for docker support.">
+      <option name="closed" value="true" />
+      <created>1757485209900</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1757485209901</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -158,6 +166,7 @@
     <MESSAGE value="routine modification." />
     <MESSAGE value="bugfix in booking service." />
     <MESSAGE value="Design documents added." />
-    <option name="LAST_COMMIT_MESSAGE" value="Design documents added." />
+    <MESSAGE value="Changes added for docker support." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes added for docker support." />
   </component>
 </project>

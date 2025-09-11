@@ -8,6 +8,7 @@ For Windows
    Run: .\stripe.exe login
 
    This will open a browser login page. Press Enter when prompted, then log in to your Stripe account.
+   *It will generate a webhook key for the first time, keep it safe.
 
 3. Authorize the CLI
    After logging in, a pairing code will appear in PowerShell.
@@ -27,6 +28,7 @@ For macOS (via Homebrew)
 2 Log in to Stripe
     Run: stripe login
     This will open a browser login page. Press Enter when prompted, then log in to your Stripe account.
+    *It will generate a webhook key for the first time, keep it safe.
 
 3. Authorize the CLI
     After logging in, a pairing code will appear in Terminal.
