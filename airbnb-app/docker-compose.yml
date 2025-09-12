@@ -18,7 +18,17 @@ services:
     networks:
       - airbnb-network
 
-  #stripe-gateway:
+  stripe-gateway:
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    env_file:
+      - .env
+    command: >
+      listen --forward-to http://airbnb-app:8080/api/v1/webhook/payment
+    environment:
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+    networks:
+      - airbnb-network
 
   airbnb-db:
     image: postgres:16-alpine
