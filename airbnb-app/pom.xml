@@ -11,7 +11,7 @@
 	<groupId>com.codingshuttle.projects</groupId>
 	<artifactId>airBnbApp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>airBnbApp</name>
+	<name>airbnbapp</name>
 	<description>Demo project for Spring Boot for AirBnb and hotel management system.</description>
 	<url/>
 	<licenses>
@@ -95,7 +95,11 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.8.4</version>
 		</dependency>
-
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>3.0.0</version>
+        </dependency>
 
 	</dependencies>
 
@@ -125,6 +129,27 @@
 					</excludes>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.6</version>
+                <configuration>
+                    <to>
+                        <image>docker.io/smrutiranjanm/${project.name}:${project.version}</image>
+                        <tags>
+                            <tag>latest</tag>
+                        </tags>
+                    </to>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
