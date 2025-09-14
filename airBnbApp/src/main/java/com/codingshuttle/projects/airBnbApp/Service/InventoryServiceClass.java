@@ -83,6 +83,8 @@ public class InventoryServiceClass implements InventoryService {
 
         long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate())+1;
         //business logic- 90 days
+        //this will not check the available room just fetch the hotel min price and send the response.
+        //to check the exact room available and show in the search result the instead of hotelMinPriceRepository use inventoryRepository
         Page<HotelPriceDto> hotelPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),
                 hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(),
                 dateCount, pageable);
