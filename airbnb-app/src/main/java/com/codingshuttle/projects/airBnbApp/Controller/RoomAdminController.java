@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/hotels/{hotelId}/rooms")
+@RequestMapping("/manager/hotels/{hotelId}/rooms")
 @RequiredArgsConstructor
 public class RoomAdminController {
     private final RoomService roomService;

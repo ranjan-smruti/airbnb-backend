@@ -34,7 +34,7 @@ public class AuthService {
         }
 
         User newUser = modelMapper.map(signUpRequestDTO, User.class);
-        newUser.setRoles(Set.of(Roles.GUEST));
+        newUser.setRoles(Set.of(Roles.USER));
         newUser.setPassword(passwordEncoder.encode(signUpRequestDTO.getPassword()));
         newUser = userRepository.save(newUser);
 

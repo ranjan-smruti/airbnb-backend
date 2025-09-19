@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/admin/hotels")
+@RequestMapping(path = "/manager/hotels")
 @RequiredArgsConstructor
 @Slf4j
 public class HotelController {

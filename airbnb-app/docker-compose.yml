@@ -1,6 +1,6 @@
 services:
   airbnb-app:
-    image: smrutiranjanm/airbnbapp:0.0.1-SNAPSHOT
+    image: smrutiranjanm/airbnbapp:latest
     container_name: airbnb-app
     env_file:
       - .env
@@ -46,7 +46,7 @@ services:
     volumes:
       - pgdata_Hotel:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
       interval: 10s
       timeout: 5s
       retries: 5

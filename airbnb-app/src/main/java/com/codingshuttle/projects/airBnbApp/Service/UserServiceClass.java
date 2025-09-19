@@ -40,6 +40,8 @@ public class UserServiceClass implements UserService, UserDetailsService {
         if(profileUpdateRequestDTO.getDateOfBirth() != null) user.setDateOfBirth(profileUpdateRequestDTO.getDateOfBirth());
         if(profileUpdateRequestDTO.getGender() != null) user.setGender(profileUpdateRequestDTO.getGender());
         if(profileUpdateRequestDTO.getName() != null) user.setName(profileUpdateRequestDTO.getName());
+
+        //TODO: keep the requested roles as pending. get it approved by admin.
         if(profileUpdateRequestDTO.getRoles() != null) user.setRoles(profileUpdateRequestDTO.getRoles());
 
         userRepository.save(user);
