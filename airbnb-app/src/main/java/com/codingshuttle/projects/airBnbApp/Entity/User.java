@@ -1,7 +1,9 @@
 package com.codingshuttle.projects.airBnbApp.Entity;
 
+import com.codingshuttle.projects.airBnbApp.Entity.enums.AccountType;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.Gender;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +31,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     private String name;
@@ -41,6 +44,9 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles;
+
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

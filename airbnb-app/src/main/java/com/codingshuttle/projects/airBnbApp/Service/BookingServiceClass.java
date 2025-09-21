@@ -291,7 +291,7 @@ public class BookingServiceClass implements BookingService {
         log.info("Fetching all bookings for hotel with id {}",hotelId);
 
         if(!user.equals(hotel.getOwner())){
-            throw new AccessDeniedException("No access to view resources of hotel +"+hotelId);
+            throw new AccessDeniedException("No access to view resources of hotel "+hotelId);
         }
 
         List<Booking> booking = bookingRepository.findByHotel(hotel);

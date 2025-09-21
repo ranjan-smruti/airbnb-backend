@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class RoomAdminController {
     }
 
     @DeleteMapping("/{roomId}")
+    @PreAuthorize("hasRole('ADMIN')") //only admin is allowed to delete
     public ResponseEntity<APIResponse<?>> deleteRoomById(@PathVariable Long hotelId,
                                                          @PathVariable Long roomId){
         roomService.deleteRoomById(roomId);

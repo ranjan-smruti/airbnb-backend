@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -33,8 +34,11 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try{
-            final String requestTokenHeader  =request.getHeader("Authorization");
-            if(requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer")){
+            final String requestTokenHeader = request.getHeader("Authorization");
+            if(requestTokenHeader == null ||
+                    !requestTokenHeader.startsWith("Bearer") ||
+                    HttpMethod.OPTIONS.matches(request.getMethod()))
+            {
                 filterChain.doFilter(request,response);
                 return;
             }

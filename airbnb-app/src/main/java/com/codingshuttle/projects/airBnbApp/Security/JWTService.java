@@ -1,6 +1,7 @@
 package com.codingshuttle.projects.airBnbApp.Security;
 
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -26,7 +27,7 @@ public class JWTService {
                 .claim("email",user.getEmail())
                 .claim("roles",user.getRoles().toString())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000*60*10))
+                .expiration(new Date(System.currentTimeMillis() + 1000*60*60))
                 .signWith(getSecretKey())
                 .compact();
     }
@@ -35,7 +36,7 @@ public class JWTService {
         return Jwts.builder()
                 .subject(user.getId().toString())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000L *60*60*24*38*6))
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7))
                 .signWith(getSecretKey())
                 .compact();
     }

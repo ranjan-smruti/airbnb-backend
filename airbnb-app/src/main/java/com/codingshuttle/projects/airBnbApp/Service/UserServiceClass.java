@@ -3,6 +3,7 @@ package com.codingshuttle.projects.airBnbApp.Service;
 import com.codingshuttle.projects.airBnbApp.Controller.ProfileUpdateRequestDTO;
 import com.codingshuttle.projects.airBnbApp.DTO.UserDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
 import com.codingshuttle.projects.airBnbApp.Repository.UserRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.UserService;
 import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
 
@@ -41,9 +43,15 @@ public class UserServiceClass implements UserService, UserDetailsService {
         if(profileUpdateRequestDTO.getGender() != null) user.setGender(profileUpdateRequestDTO.getGender());
         if(profileUpdateRequestDTO.getName() != null) user.setName(profileUpdateRequestDTO.getName());
 
-        //TODO: keep the requested roles as pending. get it approved by admin.
-        if(profileUpdateRequestDTO.getRoles() != null) user.setRoles(profileUpdateRequestDTO.getRoles());
-
+        if (profileUpdateRequestDTO.getRoles() != null && !profileUpdateRequestDTO.getRoles().isEmpty()) {
+            for (Roles requestedRole : profileUpdateRequestDTO.getRoles()) {
+                if (requestedRole == Roles.HOTEL_MANAGER) {
+                    user.getRoles().add(Roles.PENDING_HOTEL_MANAGER);
+                } else {
+                    user.getRoles().add(requestedRole);
+                }
+            }
+        }
         userRepository.save(user);
     }
 

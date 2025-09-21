@@ -20,7 +20,7 @@ public class AdminServiceClass implements AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
         if (!user.getRoles().contains(Roles.PENDING_HOTEL_MANAGER)) {
-            throw new IllegalStateException("User is not pending approval for hotel manager");
+            throw new IllegalStateException("User has no pending approval for hotel manager");
         }
 
         user.getRoles().remove(Roles.PENDING_HOTEL_MANAGER);

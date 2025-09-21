@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,7 @@ public class RoomServiceClass implements RoomService {
     ObjectMapper objectMapper;
 
     @Override
+    @PreAuthorize("hasRole('HOTEL_MANAGER')") //only manager is allowed to create room
     public RoomDto createNewRoom(Long hotelId, RoomDto roomDto){
         log.info("Creating a new room in hotel with ID: {}", hotelId);
         Hotel hotel = hotelRepository
@@ -89,6 +91,7 @@ public class RoomServiceClass implements RoomService {
     }
 
     @Override
+    @PreAuthorize("hasRole('HOTEL_MANAGER')") //only manager is allowed to update room
     public RoomDto updateRoomById(Long hotelId, Long roomId, RoomDto roomDto) {
         log.info("Updating the room with ID: {}",roomId);
         Hotel hotel = hotelRepository
@@ -114,17 +117,18 @@ public class RoomServiceClass implements RoomService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')") //only admin is allowed to delete
     public void deleteRoomById(Long id) {
         log.info("Deleting room with id: {}", id);
         Room room = roomRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Room not found with id " + id));
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!user.equals(room.getHotel().getOwner()))
-        {
-            throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
-        }
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if(!user.equals(room.getHotel().getOwner()))
+//        {
+//            throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
+//        }
 
         inventoryService.deleteAllInventories(room);
         roomRepository.deleteById(id);

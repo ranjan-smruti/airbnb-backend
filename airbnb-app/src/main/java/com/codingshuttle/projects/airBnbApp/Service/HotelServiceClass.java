@@ -6,7 +6,9 @@ import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.UnauthorizedException;
+import com.codingshuttle.projects.airBnbApp.Repository.HotelMinPriceRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -34,11 +37,13 @@ public class HotelServiceClass implements HotelService {
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
     private final RoomRepository roomRepository;
+    private final PricingUpdateService pricingUpdateService;
 
     @Autowired
     ObjectMapper objectMapper;
 
     @Override
+    @PreAuthorize("hasRole('HOTEL_MANAGER')") //only manager is allowed to create hotel
     public HotelDto createNewHotel(HotelDto hotelDto){
         log.info("Creating new hotel with name: {}",hotelDto.getName());
         Hotel hotel = modelMapper.map(hotelDto,Hotel.class);
@@ -67,6 +72,7 @@ public class HotelServiceClass implements HotelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('HOTEL_MANAGER')") //only manager is allowed to update hotel
     public HotelDto updateHotelById(Long id, HotelDto hotelDto){
         log.info("Updating the hotel with ID: {}",id);
         Hotel hotel = hotelRepository
@@ -79,6 +85,8 @@ public class HotelServiceClass implements HotelService {
             throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
         }
 
+        hotelDto.setActive(hotel.getActive());
+
         modelMapper.map(hotelDto,hotel);    //mapping the dto to hotel entity
         hotel.setId(id);
         hotel = hotelRepository.save(hotel);
@@ -87,37 +95,40 @@ public class HotelServiceClass implements HotelService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')") //only admin is allowed to delete
     public void deleteHotelById(Long id) {
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
-        User user = getCurrentUser();
-        if(!user.equals(hotel.getOwner()))
-        {
-            throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
-        }
+
+//        User user = getCurrentUser();
+//        if(!user.equals(hotel.getOwner()))
+//        {
+//            throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
+//        }
 
         for(Room room: hotel.getRooms()){
             inventoryService.deleteAllInventories(room);
             roomRepository.deleteById(room.getId());
         }
-
+        pricingUpdateService.deleteMinPriceInventories(hotel);
         hotelRepository.deleteById(id);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')") //only admin is allowed to activate the hotel
     public void activateHotel(Long id) {
         log.info("Activating the hotel with ID: {}",id);
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + id));
 
-        User user = getCurrentUser();
-        if(!user.equals(hotel.getOwner()))
-        {
-            throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
-        }
+//        User user = getCurrentUser();
+//        if(!user.equals(hotel.getOwner()))
+//        {
+//            throw new UnauthorizedException("This user doesn't own this hotel with id "+id);
+//        }
 
         if(hotel.getActive()){
             throw new ResourceNotFoundException("Hotel is already active");

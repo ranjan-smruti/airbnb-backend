@@ -22,7 +22,6 @@ public class AdminController {
     @PutMapping("/approve/{userId}")
     public ResponseEntity<APIResponse<?>> approveHotelManager(@PathVariable Long userId)
     {
-        //create a dto to send the roles that requested to be assigned
         adminService.approveHotelManager(userId);
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK)

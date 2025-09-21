@@ -1,6 +1,7 @@
 package com.codingshuttle.projects.airBnbApp.Entity;
 
 import com.codingshuttle.projects.airBnbApp.Entity.enums.BookingStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -33,6 +34,7 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id",nullable = false)
+    @JsonIgnore
     private User user;
 
     @ManyToMany(fetch = FetchType.LAZY)

@@ -3,8 +3,11 @@ package com.codingshuttle.projects.airBnbApp.Controller;
 import com.codingshuttle.projects.airBnbApp.DTO.BookingDto;
 import com.codingshuttle.projects.airBnbApp.DTO.BookingRequestDTO;
 import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
+import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.BookingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,13 +38,22 @@ public class HotelBookingController {
     }
 
     @PostMapping("/{bookingId}/cancel")
-    public ResponseEntity<Void> cancelBooking(@PathVariable Long bookingId){
+    public ResponseEntity<APIResponse<?>> cancelBooking(@PathVariable Long bookingId){
         bookingService.cancelBooking(bookingId);
-        return ResponseEntity.noContent().build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK)
+                .msg("Your booking with " + bookingId + " has been canceled. Refund will be initiated shortly.")
+                .build();
+        return buildResponseEntity(apiResponse);
     }
 
     @PostMapping("/{bookingId}/status")
     public ResponseEntity<Map<String,String>> getBookingStatus(@PathVariable Long bookingId){
         return ResponseEntity.ok(Map.of("status",bookingService.getBookingStatus(bookingId)));
+    }
+
+    private ResponseEntity<APIResponse<?>> buildResponseEntity(ApiResponse apiResponse) {
+        return new ResponseEntity<>(new APIResponse<>(apiResponse),apiResponse.getStatus());
     }
 }

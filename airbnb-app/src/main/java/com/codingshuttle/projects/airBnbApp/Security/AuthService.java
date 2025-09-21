@@ -1,9 +1,8 @@
 package com.codingshuttle.projects.airBnbApp.Security;
 
-import com.codingshuttle.projects.airBnbApp.DTO.LoginDTO;
-import com.codingshuttle.projects.airBnbApp.DTO.SignUpRequestDTO;
-import com.codingshuttle.projects.airBnbApp.DTO.UserDTO;
+import com.codingshuttle.projects.airBnbApp.DTO.*;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.AccountType;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import com.codingshuttle.projects.airBnbApp.Repository.UserRepository;
@@ -35,17 +34,49 @@ public class AuthService {
 
         User newUser = modelMapper.map(signUpRequestDTO, User.class);
         newUser.setRoles(Set.of(Roles.USER));
+        newUser.setAccountType(AccountType.USER);
         newUser.setPassword(passwordEncoder.encode(signUpRequestDTO.getPassword()));
         newUser = userRepository.save(newUser);
 
         return modelMapper.map(newUser, UserDTO.class);
     }
 
+    public String[] guestLogin(GuestLoginDTO guestLoginDTO) {
+
+        User user = userRepository.findByEmail(guestLoginDTO.getEmail()).orElse(null);
+        String[] token = new String[2];
+
+        if(user != null){
+            token[0] = jwtService.generateAccessToken(user);
+            token[1] = jwtService.generateRefreshToken(user);
+
+            return token;
+        }
+
+        User guestUser = modelMapper.map(guestLoginDTO, User.class);
+        guestUser.setRoles(Set.of(Roles.GUEST));
+        guestUser.setAccountType(AccountType.GUEST);
+        guestUser.setPassword(passwordEncoder.encode("n/a"));
+        userRepository.save(guestUser);
+
+        token[0] = jwtService.generateAccessToken(guestUser);
+        token[1] = jwtService.generateRefreshToken(guestUser);
+
+        return token;
+    }
+
     public String[] login(LoginDTO loginDTO){
+
+        User user = userRepository.findByEmail(loginDTO.getEmail()).orElse(null);
+        if(user == null){
+            throw new RuntimeException("User with email " + loginDTO.getEmail() + " doesn't exists.");
+        }
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(), loginDTO.getPassword()
         ));
-        User user = (User) authentication.getPrincipal();
+
+        user = (User) authentication.getPrincipal();
 
         String[] token = new String[2];
         token[0] = jwtService.generateAccessToken(user);
