@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -19,6 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.List;
+
 @Configuration
 @RequiredArgsConstructor
 public class JWTAuthFilter extends OncePerRequestFilter {
@@ -31,16 +34,25 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestPath = request.getServletPath();
+
+        // Define public routes (must match what you configured in SecurityFilterChain)
+        List<String> publicRoutes = List.of("/auth/", "/hotels/", "/v3/api-docs", "/swagger-ui", "/webhook");
+        return publicRoutes.stream().anyMatch(requestPath::startsWith);
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try{
             final String requestTokenHeader = request.getHeader("Authorization");
             if(requestTokenHeader == null ||
-                    !requestTokenHeader.startsWith("Bearer") ||
-                    HttpMethod.OPTIONS.matches(request.getMethod()))
+                    !requestTokenHeader.startsWith("Bearer"))
             {
-                filterChain.doFilter(request,response);
-                return;
+                throw new AuthenticationCredentialsNotFoundException("Authorization header is not found");
+//                filterChain.doFilter(request,response);
+//                return;
             }
 
             String token = requestTokenHeader.split("Bearer ")[1];
