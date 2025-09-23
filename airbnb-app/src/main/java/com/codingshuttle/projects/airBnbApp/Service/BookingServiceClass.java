@@ -1,6 +1,9 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
-import com.codingshuttle.projects.airBnbApp.DTO.*;
+import com.codingshuttle.projects.airBnbApp.DTO.BookingDto;
+import com.codingshuttle.projects.airBnbApp.DTO.BookingRequestDTO;
+import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
+import com.codingshuttle.projects.airBnbApp.DTO.HotelReportDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.*;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.BookingStatus;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.UnauthorizedException;
@@ -21,6 +24,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -47,6 +51,7 @@ public class BookingServiceClass implements BookingService {
     private final GuestRepository guestRepository;
     private final CheckOutService checkOutService;
     private final PricingService pricingService;
+    private final BookingMonitorService bookingMonitorService;
 
     @Value("${frontend.url}")
     private String frontEndUrl;
@@ -111,7 +116,7 @@ public class BookingServiceClass implements BookingService {
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
 
-        if(hasBookingExpired(booking)){
+        if(bookingMonitorService.hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has already expired!!");
         }
 
@@ -143,7 +148,7 @@ public class BookingServiceClass implements BookingService {
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
 
-        if(hasBookingExpired(booking)){
+        if(bookingMonitorService.hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has already expired!!");
         }
 
@@ -299,11 +304,5 @@ public class BookingServiceClass implements BookingService {
         return booking.stream()
                 .map((element)->modelMapper.map(element, BookingDto.class))
                 .collect(Collectors.toList());
-    }
-
-    public boolean hasBookingExpired(Booking booking){
-        //Booking only active for 10 minutes.
-        //so adding of guest list should be with in this window.
-        return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
     }
 }
