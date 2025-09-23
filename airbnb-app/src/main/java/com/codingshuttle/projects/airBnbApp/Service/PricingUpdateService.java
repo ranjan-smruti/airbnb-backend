@@ -36,7 +36,7 @@ public class PricingUpdateService {
 
 //    @Scheduled(cron="0 * * * * *") //Every 1min
     //@Scheduled(cron="0 0 * * * *") //Every 1 hour
-    @Scheduled(cron="${app.scheduling.cron}")
+    @Scheduled(cron="${app.scheduling.cron.price}")
     public void updatePrices(){
         int page = 0;
         int batchSize = 100;
