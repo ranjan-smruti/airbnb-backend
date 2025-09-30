@@ -1,21 +1,18 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
-import com.codingshuttle.projects.airBnbApp.Controller.ProfileUpdateRequestDTO;
+import com.codingshuttle.projects.airBnbApp.DTO.ProfileUpdateRequestDTO;
 import com.codingshuttle.projects.airBnbApp.DTO.UserDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
 import com.codingshuttle.projects.airBnbApp.Repository.UserRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.UserService;
-import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
 

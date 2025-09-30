@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -25,13 +26,14 @@ public class PricingService {
         pricingStrategy = new UrgencyPricingStrategy(pricingStrategy);
         pricingStrategy = new HolidayPricingStrategy(pricingStrategy,holidayService);
 
-        return pricingStrategy.calculatePrice(inventory);
+        return pricingStrategy.calculatePrice(inventory).setScale(2, RoundingMode.CEILING);
     }
 
     //return the sum of price of this inventory list
     public  BigDecimal calculateTotalPrice(List<Inventory> inventoryList){
         return inventoryList.stream()
                 .map(this::calculateDynamicPricing)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .reduce(BigDecimal.ZERO,BigDecimal::add)
+                .setScale(2,RoundingMode.CEILING);
     }
 }

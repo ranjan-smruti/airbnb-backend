@@ -11,7 +11,7 @@ import com.codingshuttle.projects.airBnbApp.Repository.*;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.BookingService;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.CheckOutService;
 import com.codingshuttle.projects.airBnbApp.Strategy.PricingService;
-import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.Refund;
@@ -24,7 +24,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -106,7 +105,7 @@ public class BookingServiceClass implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto addGuests(Long bookingId, List<GuestDto> guestDtoList) {
+    public BookingDto addGuests(Long bookingId, List<Long> guestIdList) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(()->
                 new ResourceNotFoundException("No bookings found with id: " + bookingId));
 
@@ -124,10 +123,9 @@ public class BookingServiceClass implements BookingService {
             throw new IllegalStateException("Booking is not under reserved state, cannot add guest.");
         }
 
-        for(GuestDto guestDto: guestDtoList){
-            Guest guest = modelMapper.map(guestDto, Guest.class);
-            guest.setUser(user);
-            guest = guestRepository.save(guest);
+        for(Long guestId: guestIdList){
+            Guest guest = guestRepository.findById(guestId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Guest not found with id: "+guestId));
             booking.getGuests().add(guest);
         }
         booking.setBookingStatus(BookingStatus.GUESTS_ADDED);
@@ -230,7 +228,7 @@ public class BookingServiceClass implements BookingService {
     }
 
     @Override
-    public String getBookingStatus(Long bookingId) {
+    public BookingDto getBookingStatus(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
                 ()->new ResourceNotFoundException("Booking not found with id: " + bookingId)
         );
@@ -239,7 +237,7 @@ public class BookingServiceClass implements BookingService {
         if(!Objects.equals(user.getId(), booking.getUser().getId())){
             throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
         }
-        return booking.getBookingStatus().name();
+        return modelMapper.map(booking, BookingDto.class);
     }
 
     @Override

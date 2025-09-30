@@ -1,6 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.Service.interfaces;
 
-import com.codingshuttle.projects.airBnbApp.Controller.ProfileUpdateRequestDTO;
+import com.codingshuttle.projects.airBnbApp.DTO.ProfileUpdateRequestDTO;
 import com.codingshuttle.projects.airBnbApp.DTO.UserDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
 

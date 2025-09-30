@@ -1,7 +1,8 @@
 package com.codingshuttle.projects.airBnbApp.Controller;
 
 import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoDto;
-import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto;
+import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoRequestDto;
+import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceResponseDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelSearchRequest;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/hotels")
@@ -23,13 +26,27 @@ public class HotelBrowseController {
     * These prices again will differ on the basis of different strategy like urgency(booked within 7days of the present date),holiday,surge factor,occupancy,etc.
     * */
     @GetMapping("/search")
-    public ResponseEntity<Page<HotelPriceDto>> searchHotels(@RequestBody HotelSearchRequest hotelSearchRequest){
-       var page = inventoryService.searchHotels(hotelSearchRequest);
-        return ResponseEntity.ok(page);
+    public ResponseEntity<Page<HotelPriceResponseDto>> searchHotels(
+            @RequestParam String city,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam Integer roomsCount,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size)
+    {
+        HotelSearchRequest hotelSearchRequest = new HotelSearchRequest(city,startDate,endDate,roomsCount,page,size);
+        var pageResult = inventoryService.searchHotels(hotelSearchRequest);
+        return ResponseEntity.ok(pageResult);
     }
 
     @GetMapping("/{hotelId}/info")
-    public ResponseEntity<HotelInfoDto> getHotelInfo(@PathVariable Long hotelId){
-        return ResponseEntity.ok(hotelService.getHotelInfoById(hotelId));
+    public ResponseEntity<HotelInfoDto> getHotelInfo(
+            @PathVariable Long hotelId,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) Long roomsCount) {
+
+        HotelInfoRequestDto hotelInfoRequestDto = new HotelInfoRequestDto(startDate, endDate, roomsCount);
+        return ResponseEntity.ok(hotelService.getHotelInfoById(hotelId, hotelInfoRequestDto));
     }
 }

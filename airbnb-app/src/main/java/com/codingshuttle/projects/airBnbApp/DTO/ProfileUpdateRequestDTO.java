@@ -1,4 +1,4 @@
-package com.codingshuttle.projects.airBnbApp.Controller;
+package com.codingshuttle.projects.airBnbApp.DTO;
 
 import com.codingshuttle.projects.airBnbApp.Entity.enums.Gender;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;

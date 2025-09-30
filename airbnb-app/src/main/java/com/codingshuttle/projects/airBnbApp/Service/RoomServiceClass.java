@@ -10,7 +10,7 @@ import com.codingshuttle.projects.airBnbApp.Repository.HotelRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.RoomService;
-import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

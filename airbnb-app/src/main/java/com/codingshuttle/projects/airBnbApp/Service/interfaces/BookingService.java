@@ -10,7 +10,7 @@ public interface BookingService {
 
     BookingDto initializeBooking(BookingRequestDTO bookingRequestDTO);
 
-    BookingDto addGuests(Long bookingId, List<GuestDto> guestDtoList);
+    BookingDto addGuests(Long bookingId, List<Long> guestDtoList);
 
     String initiatePayments(Long bookingId);
 
@@ -18,7 +18,7 @@ public interface BookingService {
 
     void cancelBooking(Long bookingId);
 
-    String getBookingStatus(Long bookingId);
+    BookingDto getBookingStatus(Long bookingId);
 
     List<BookingDto> getAllBookingsByHotelId(Long hotelId);
 

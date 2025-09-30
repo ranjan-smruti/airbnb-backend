@@ -44,6 +44,7 @@ public class Room {
     private Integer capacity;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

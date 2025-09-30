@@ -1,5 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.Repository;
 
+import com.codingshuttle.projects.airBnbApp.DTO.RoomPriceDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
@@ -97,7 +98,7 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
                 SET i.bookedCount = i.bookedCount - :numberOfRooms
                 WHERE i.room.id = :roomId
                   AND i.date BETWEEN :startDate AND :endDate
-                  AND (i.bookedCount) >= :numberOfRooms
+                  AND (i.totalCount - i.bookedCount) >= :numberOfRooms
                   AND i.closed = false
             """)
     void cancelBooking(@Param("roomId") Long roomId,
@@ -157,6 +158,29 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
                        @Param("endDate") LocalDate endDate,
                        @Param("closed") boolean closed,
                        @Param("surgeFactor") BigDecimal surgeFactor);
+
+    @Query("""
+       SELECT new com.codingshuttle.projects.airBnbApp.DTO.RoomPriceDto(
+            i.room,
+            CASE
+                WHEN COUNT(i) = :dateCount THEN AVG(i.price)
+                ELSE NULL
+            END
+        )
+       FROM Inventory i
+       WHERE i.hotel.id = :hotelId
+             AND i.date BETWEEN :startDate AND :endDate
+             AND (i.totalCount - i.bookedCount) >= :roomsCount
+             AND i.closed = false
+       GROUP BY i.room
+       """)
+    List<RoomPriceDto> findRoomAveragePrice(
+            @Param("hotelId") Long hotelId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("roomsCount") Long roomsCount,
+            @Param("dateCount") Long dateCount
+    );
 
     List<Inventory> findByHotelAndDateBetween(Hotel hotel, LocalDate startDate, LocalDate endDate);
 

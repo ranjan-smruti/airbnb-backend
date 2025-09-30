@@ -1,9 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
-import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto;
-import com.codingshuttle.projects.airBnbApp.DTO.HotelSearchRequest;
-import com.codingshuttle.projects.airBnbApp.DTO.InventoryDTO;
-import com.codingshuttle.projects.airBnbApp.DTO.UpdateInventoryRequestDTO;
+import com.codingshuttle.projects.airBnbApp.DTO.*;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
@@ -11,7 +8,7 @@ import com.codingshuttle.projects.airBnbApp.Repository.HotelMinPriceRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.InventoryRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
-import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +75,7 @@ public class InventoryServiceClass implements InventoryService {
     Group the response by room and get the response by unique hotels.
     * */
     @Override
-    public Page<HotelPriceDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
+    public Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
 
         long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate())+1;
@@ -89,7 +86,11 @@ public class InventoryServiceClass implements InventoryService {
                 hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(),
                 dateCount, pageable);
 
-        return hotelPage;
+        return hotelPage.map(hotelPriceDto -> {
+            HotelPriceResponseDto hotelPriceResponseDto = modelMapper.map(hotelPriceDto.getHotel(), HotelPriceResponseDto.class);
+            hotelPriceResponseDto.setPrice(hotelPriceDto.getPrice());
+            return hotelPriceResponseDto;
+        });
     }
 
     @Override

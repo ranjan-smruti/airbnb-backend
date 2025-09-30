@@ -1,29 +1,28 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
-import com.codingshuttle.projects.airBnbApp.DTO.HotelDto;
-import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoDto;
-import com.codingshuttle.projects.airBnbApp.DTO.RoomDto;
+import com.codingshuttle.projects.airBnbApp.DTO.*;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
-import com.codingshuttle.projects.airBnbApp.Entity.enums.Roles;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.UnauthorizedException;
-import com.codingshuttle.projects.airBnbApp.Repository.HotelMinPriceRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelRepository;
+import com.codingshuttle.projects.airBnbApp.Repository.InventoryRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
-import com.codingshuttle.projects.airBnbApp.exception.ResourceNotFoundException;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.dialect.function.InverseDistributionWindowEmulation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,7 @@ public class HotelServiceClass implements HotelService {
     private final InventoryService inventoryService;
     private final RoomRepository roomRepository;
     private final PricingUpdateService pricingUpdateService;
+    private final InventoryRepository inventoryRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -143,17 +143,35 @@ public class HotelServiceClass implements HotelService {
     }
 
     @Override
-    public HotelInfoDto getHotelInfoById(Long hotelId) {
+    public HotelInfoDto getHotelInfoById(Long hotelId, HotelInfoRequestDto hotelInfoRequestDto) {
         Hotel hotel = hotelRepository
                 .findById(hotelId)
                 .orElseThrow(()->new ResourceNotFoundException("Hotel not found with id " + hotelId));
 
-        List<RoomDto> rooms = hotel.getRooms()
-                .stream()
-                .map((element)->modelMapper.map(element,RoomDto.class))
-                .toList();
+        if(hotelInfoRequestDto.getStartDate() == null)
+            hotelInfoRequestDto.setStartDate(LocalDate.now());
+        if(hotelInfoRequestDto.getEndDate() == null)
+            hotelInfoRequestDto.setEndDate(LocalDate.now());
+        if(hotelInfoRequestDto.getRoomsCount() == null )
+            hotelInfoRequestDto.setRoomsCount(1L);
 
-        return new HotelInfoDto(modelMapper.map(hotel,HotelDto.class),rooms);
+        long daysCount = ChronoUnit.DAYS.between(hotelInfoRequestDto.getStartDate(), hotelInfoRequestDto.getEndDate())+1;
+
+        List<RoomPriceDto> roomPriceDtoList = inventoryRepository.findRoomAveragePrice(hotelId,
+                hotelInfoRequestDto.getStartDate(), hotelInfoRequestDto.getEndDate(),
+                hotelInfoRequestDto.getRoomsCount(), daysCount);
+
+
+        List<RoomPriceResponseDto> rooms = roomPriceDtoList.stream()
+                .map(roomPriceDto -> {
+                    RoomPriceResponseDto roomPriceResponseDto = modelMapper.map(roomPriceDto.getRoom(),
+                            RoomPriceResponseDto.class);
+                    roomPriceResponseDto.setPrice(roomPriceDto.getPrice());
+                    return roomPriceResponseDto;
+                })
+                .collect(Collectors.toList());
+
+        return new HotelInfoDto(modelMapper.map(hotel, HotelDto.class), rooms);
     }
 
     @Override

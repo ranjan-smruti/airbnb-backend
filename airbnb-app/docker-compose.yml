@@ -14,7 +14,6 @@ services:
       - "${SERVER_PORT}:8080"
     depends_on:
       - airbnb-db
-#      - stripe-gateway
     networks:
       - airbnb-network
 

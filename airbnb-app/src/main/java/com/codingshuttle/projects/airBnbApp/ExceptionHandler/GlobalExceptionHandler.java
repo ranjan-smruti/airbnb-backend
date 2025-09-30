@@ -95,6 +95,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(apiError);
     }
 
+    public ResponseEntity<APIResponse<?>> handleInternalServerError(Exception exception) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .msg(exception.getMessage())
+                .build();
+        return buildErrorResponseEntity(apiError);
+    }
+
     private ResponseEntity<APIResponse<?>> buildErrorResponseEntity(ApiResponse apiError) {
         return new ResponseEntity<>(new APIResponse<>(apiError),apiError.getStatus());
     }
