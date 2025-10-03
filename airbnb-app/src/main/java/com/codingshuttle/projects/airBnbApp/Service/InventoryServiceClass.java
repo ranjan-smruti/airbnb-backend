@@ -1,6 +1,7 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.*;
+import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,8 @@ public class InventoryServiceClass implements InventoryService {
     private final ModelMapper modelMapper;
     private final HotelMinPriceRepository hotelMinPriceRepository;
     private final RoomRepository roomRepository;
+
+    private final Integer SEARCH_DAYS_LIMIT = 90;
 
     @Override
     public void initializeRoomForAYear(Room room){
@@ -79,12 +83,25 @@ public class InventoryServiceClass implements InventoryService {
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
 
         long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate())+1;
-        //business logic- 90 days
-        //this will not check the available room just fetch the hotel min price and send the response.
-        //to check the exact room available and show in the search result the instead of hotelMinPriceRepository use inventoryRepository
-        Page<HotelPriceDto> hotelPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),
-                hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(),
-                dateCount, pageable);
+        long daysBetween = ChronoUnit.DAYS.between(LocalDate.now(),hotelSearchRequest.getStartDate());
+
+        if(daysBetween < SEARCH_DAYS_LIMIT)
+        {
+            Page<HotelPriceDto> hotelPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),
+                    hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(),
+                    dateCount, pageable);
+
+            return hotelPage.map(hotelPriceDto -> {
+                HotelPriceResponseDto hotelPriceResponseDto = modelMapper.map(hotelPriceDto.getHotel(), HotelPriceResponseDto.class);
+                hotelPriceResponseDto.setPrice(hotelPriceDto.getPrice());
+                return hotelPriceResponseDto;
+            });
+        }
+
+        //logic for date exceeding beyond SEARCH_DAYS_LIMIT days.
+        Page<HotelPriceDto> hotelPage = inventoryRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),
+                hotelSearchRequest.getEndDate(),hotelSearchRequest.getRoomsCount(),
+                dateCount,pageable);
 
         return hotelPage.map(hotelPriceDto -> {
             HotelPriceResponseDto hotelPriceResponseDto = modelMapper.map(hotelPriceDto.getHotel(), HotelPriceResponseDto.class);
@@ -124,5 +141,32 @@ public class InventoryServiceClass implements InventoryService {
                 updateInventoryRequestDTO.getEndDate(), updateInventoryRequestDTO.getClosed(),
                 updateInventoryRequestDTO.getSurgeFactor());
 
+    }
+
+    @Override
+    public void updatePriceByRoom(Room room) {
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusYears(1);
+
+        inventoryRepository.getInventoryAndLockBeforeUpdate(room.getId(),today,endDate);
+        inventoryRepository.updatePriceByRoom(room.getId(),room.getBasePrice());
+    }
+
+    @Override
+    public void updateRoomCountByRoom(Room room) {
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusYears(1);
+
+        List<Inventory> inv = inventoryRepository.getInventoryAndLockBeforeUpdate(room.getId(), today,endDate);
+
+        List<LocalDate> validDates = new ArrayList<>();
+        for (Inventory inventory : inv) {
+            int bookedPlusReserved = inventory.getBookedCount() + inventory.getReservedCount();
+            if (room.getTotalCount() >= bookedPlusReserved) {
+                validDates.add(inventory.getDate());
+            }
+        }
+
+        inventoryRepository.updateCountByRoom(room.getId(), room.getTotalCount(), validDates);
     }
 }

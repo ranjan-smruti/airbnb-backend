@@ -85,7 +85,8 @@ public class BookingServiceClass implements BookingService {
                 bookingRequestDTO.getRoomsCount());
 
         BigDecimal priceForOneRoom = pricingService.calculateTotalPrice(inventoryList);
-        BigDecimal totalPrice = priceForOneRoom.multiply(BigDecimal.valueOf(bookingRequestDTO.getRoomsCount()));
+        BigDecimal totalPrice = priceForOneRoom.multiply(BigDecimal.valueOf(bookingRequestDTO.getRoomsCount()))
+                .setScale(2,RoundingMode.CEILING);
 
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)

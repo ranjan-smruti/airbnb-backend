@@ -55,7 +55,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(guestService.addNewGuest(guestDto));
     }
 
-    @PutMapping("guests/{guestId}")
+    @PutMapping("/guests/{guestId}")
     public ResponseEntity<APIResponse<?>> updateGuest(@PathVariable Long guestId, @RequestBody GuestDto guestDto) {
         guestService.updateGuest(guestId, guestDto);
 
@@ -66,7 +66,7 @@ public class UserController {
         return buildResponseEntity(apiResponse);
     }
 
-    @DeleteMapping("guests/{guestId}")
+    @DeleteMapping("/guests/{guestId}")
     public ResponseEntity<APIResponse<?>> deleteGuest(@PathVariable Long guestId) {
         guestService.deleteGuest(guestId);
 

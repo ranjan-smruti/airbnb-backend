@@ -1,5 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.Repository;
 
+import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto;
 import com.codingshuttle.projects.airBnbApp.DTO.RoomPriceDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
@@ -27,7 +28,7 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
     //range there maybe only 1 available , so it will not get fetch in the search
     //only date with two rooms available will be shown .
     @Query("""
-             SELECT DISTINCT i.hotel
+             SELECT new com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto(i.hotel, AVG(i.price))
              FROM Inventory i
              WHERE i.city = :city
                  AND i.date BETWEEN :startDate AND :endDate
@@ -36,7 +37,7 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
                  GROUP BY i.hotel, i.room
                  HAVING COUNT(i.date) = :dateCount
            """)
-    Page<Hotel> findHotelsWithAvailableInventory(
+    Page<HotelPriceDto> findHotelsWithAvailableInventory(
             @Param("city") String city,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
@@ -158,6 +159,26 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
                        @Param("endDate") LocalDate endDate,
                        @Param("closed") boolean closed,
                        @Param("surgeFactor") BigDecimal surgeFactor);
+
+    @Modifying
+    @Query("""
+            UPDATE Inventory i
+            SET i.price = :newPrice
+            WHERE i.room.id = :roomId
+            """)
+    void updatePriceByRoom(@Param("roomId") Long roomId,
+                           @Param("newPrice") BigDecimal newPrice);
+
+    @Modifying
+    @Query("""
+            UPDATE Inventory i
+            SET i.totalCount = :newTotalCount
+            WHERE i.room.id = :roomId
+            AND i.date IN :dates
+            """)
+    void updateCountByRoom(@Param("roomId") Long roomId,
+                           @Param("newTotalCount") Integer newTotalCount,
+                           @Param("dates") List<LocalDate> dates);
 
     @Query("""
        SELECT new com.codingshuttle.projects.airBnbApp.DTO.RoomPriceDto(

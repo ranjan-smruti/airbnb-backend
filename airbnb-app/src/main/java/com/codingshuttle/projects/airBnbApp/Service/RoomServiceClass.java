@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,7 @@ public class RoomServiceClass implements RoomService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('HOTEL_MANAGER')") //only manager is allowed to update room
     public RoomDto updateRoomById(Long hotelId, Long roomId, RoomDto roomDto) {
         log.info("Updating the room with ID: {}",roomId);
@@ -106,12 +108,19 @@ public class RoomServiceClass implements RoomService {
 
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
 
+        BigDecimal oldPrice = room.getBasePrice();
+        Integer oldTotalCount = room.getTotalCount();
+
         modelMapper.map(roomDto,room);    //mapping the dto to hotel entity
         room.setId(roomId);
-
-        //TODO: if price or inventory is updated, then update the inventory for this room.
-
         room = roomRepository.save(room);
+
+        if(!oldPrice.equals(room.getBasePrice()))
+            inventoryService.updatePriceByRoom(room);
+
+        if(!oldTotalCount.equals(room.getTotalCount()))
+            inventoryService.updateRoomCountByRoom(room);
+
         return modelMapper.map(room, RoomDto.class);
     }
 
