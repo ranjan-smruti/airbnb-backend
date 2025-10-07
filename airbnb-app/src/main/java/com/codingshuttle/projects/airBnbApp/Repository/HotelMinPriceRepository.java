@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,6 +22,7 @@ public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice,Lon
              WHERE i.hotel.city = :city
                  AND i.date BETWEEN :startDate AND :endDate
                  AND i.hotel.active = true
+                 AND (:star IS NULL OR i.hotel.star IN :star)
                  GROUP BY i.hotel
              """)
     Page<HotelPriceDto> findHotelsWithAvailableInventory(
@@ -29,6 +31,7 @@ public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice,Lon
             @Param("endDate") LocalDate endDate,
             @Param("roomsCount") Integer roomsCount,
             @Param("dateCount") Long dateCount,
+            @Param("star") List<Integer> star,
             Pageable pageable
     );
 

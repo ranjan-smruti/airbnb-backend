@@ -14,6 +14,7 @@ public class HotelPriceResponseDto {
     private String city;
     private String[] photos;
     private String[] amenities;
+    private Integer star;
     private HotelContactInfo contactInfo;
     private Double price;
 }

@@ -2,6 +2,8 @@ package com.codingshuttle.projects.airBnbApp.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,6 +31,11 @@ public class Hotel {
 
     @Column(columnDefinition = "TEXT[]")
     private String[] amenities;
+
+    @Min(1)
+    @Max(5)
+    @Column(nullable = false)
+    private Integer star;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

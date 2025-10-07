@@ -1,15 +1,15 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.*;
-import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelMinPriceRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.InventoryRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.RoomRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
-import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -80,6 +81,20 @@ public class InventoryServiceClass implements InventoryService {
     * */
     @Override
     public Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
+
+        List<Integer> ratings = hotelSearchRequest.getStar();
+        if (ratings == null || ratings.isEmpty()) {
+            hotelSearchRequest.setStar(null); // no filter
+        }
+        else
+        {
+            boolean invalid = ratings.stream().anyMatch(r -> r < 1 || r > 5);
+            if(invalid)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Property ratings must be between 1 and 5.");
+            }
+        }
+
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
 
         long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate())+1;
@@ -89,7 +104,7 @@ public class InventoryServiceClass implements InventoryService {
         {
             Page<HotelPriceDto> hotelPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),
                     hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(),
-                    dateCount, pageable);
+                    dateCount,hotelSearchRequest.getStar(), pageable);
 
             return hotelPage.map(hotelPriceDto -> {
                 HotelPriceResponseDto hotelPriceResponseDto = modelMapper.map(hotelPriceDto.getHotel(), HotelPriceResponseDto.class);
@@ -101,7 +116,7 @@ public class InventoryServiceClass implements InventoryService {
         //logic for date exceeding beyond SEARCH_DAYS_LIMIT days.
         Page<HotelPriceDto> hotelPage = inventoryRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),
                 hotelSearchRequest.getEndDate(),hotelSearchRequest.getRoomsCount(),
-                dateCount,pageable);
+                dateCount,hotelSearchRequest.getStar(),pageable);
 
         return hotelPage.map(hotelPriceDto -> {
             HotelPriceResponseDto hotelPriceResponseDto = modelMapper.map(hotelPriceDto.getHotel(), HotelPriceResponseDto.class);

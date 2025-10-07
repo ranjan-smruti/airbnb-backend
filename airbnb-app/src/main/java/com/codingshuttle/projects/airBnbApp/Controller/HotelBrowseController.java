@@ -6,12 +6,14 @@ import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceResponseDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelSearchRequest;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/hotels")
@@ -31,10 +33,11 @@ public class HotelBrowseController {
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
             @RequestParam Integer roomsCount,
+            @RequestParam (required = false) List<Integer> star,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size)
     {
-        HotelSearchRequest hotelSearchRequest = new HotelSearchRequest(city,startDate,endDate,roomsCount,page,size);
+        HotelSearchRequest hotelSearchRequest = new HotelSearchRequest(city,startDate,endDate,roomsCount,star,page,size);
         var pageResult = inventoryService.searchHotels(hotelSearchRequest);
         return ResponseEntity.ok(pageResult);
     }

@@ -2,6 +2,8 @@ package com.codingshuttle.projects.airBnbApp.ExceptionHandler;
 
 import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
 import io.jsonwebtoken.JwtException;
+import org.apache.coyote.BadRequestException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -10,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,7 +59,7 @@ public class GlobalExceptionHandler {
                 .getBindingResult()
                 .getAllErrors()
                 .stream()
-                .map(error->error.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
         ApiResponse apiError = ApiResponse.builder()
@@ -102,6 +105,16 @@ public class GlobalExceptionHandler {
                 .build();
         return buildErrorResponseEntity(apiError);
     }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<APIResponse<?>> handleResponseStatus(ResponseStatusException ex) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .msg(ex.getReason())
+                .build();
+        return buildErrorResponseEntity(apiError);
+    }
+
 
     private ResponseEntity<APIResponse<?>> buildErrorResponseEntity(ApiResponse apiError) {
         return new ResponseEntity<>(new APIResponse<>(apiError),apiError.getStatus());
