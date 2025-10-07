@@ -10,7 +10,7 @@ public interface InventoryService {
     void initializeRoomForAYear(Room room);
     void deleteAllInventories(Room room);
 
-    Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest);
+    Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest, String nflt);
 
     List<InventoryDTO> getAllInventoryByRoom(Long roomId);
 
@@ -19,4 +19,6 @@ public interface InventoryService {
     void updatePriceByRoom(Room room);
 
     void updateRoomCountByRoom(Room room);
+
+    void validateRequestFilters(HotelSearchRequest hotelSearchRequest, String nflt);
 }

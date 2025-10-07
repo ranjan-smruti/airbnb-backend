@@ -10,21 +10,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice,Long> {
+public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice, Long> {
     @Query("""
-             SELECT new com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto(i.hotel, AVG(i.price))
-             FROM HotelMinPrice i
-             WHERE i.hotel.city = :city
-                 AND i.date BETWEEN :startDate AND :endDate
-                 AND i.hotel.active = true
-                 AND (:star IS NULL OR i.hotel.star IN :star)
-                 GROUP BY i.hotel
-             """)
+            SELECT new com.codingshuttle.projects.airBnbApp.DTO.HotelPriceDto(i.hotel, AVG(i.price))
+            FROM HotelMinPrice i
+            WHERE i.hotel.city = :city
+                AND i.date BETWEEN :startDate AND :endDate
+                AND i.hotel.active = true
+                AND (:star IS NULL OR i.hotel.star IN :star)
+                AND (:ratings IS NULL OR i.hotel.rating IN :ratings)
+                AND (:lowPrice IS NULL OR i.price >= :lowPrice)
+                AND (:highPrice IS NULL OR i.price <= :highPrice)
+                GROUP BY i.hotel
+            """)
     Page<HotelPriceDto> findHotelsWithAvailableInventory(
             @Param("city") String city,
             @Param("startDate") LocalDate startDate,
@@ -32,6 +36,9 @@ public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice,Lon
             @Param("roomsCount") Integer roomsCount,
             @Param("dateCount") Long dateCount,
             @Param("star") List<Integer> star,
+            @Param("ratings") List<BigDecimal> ratings,
+            @Param("lowPrice") BigDecimal lowPrice,
+            @Param("highPrice") BigDecimal highPrice,
             Pageable pageable
     );
 

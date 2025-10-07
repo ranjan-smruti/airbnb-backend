@@ -54,6 +54,12 @@ public class HotelBookingController {
         return ResponseEntity.ok(bookingService.getBookingStatus(bookingId));
     }
 
+    @PostMapping("{bookingId}/review")
+    public void reviewNRating()
+    {
+        //TODO: Implement the review and rating and calculate the average rating and store in the hotel table.
+    }
+
     private ResponseEntity<APIResponse<?>> buildResponseEntity(ApiResponse apiResponse) {
         return new ResponseEntity<>(new APIResponse<>(apiResponse),apiResponse.getStatus());
     }

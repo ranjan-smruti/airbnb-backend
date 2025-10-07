@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public class Hotel {
     @Max(5)
     @Column(nullable = false)
     private Integer star;
+
+    @Column(nullable = true, precision = 2, scale = 1)
+    private BigDecimal rating;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

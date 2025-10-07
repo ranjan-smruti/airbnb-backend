@@ -115,6 +115,17 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(apiError);
     }
 
+    @ExceptionHandler(InvalidFilterException.class)
+    public ResponseEntity<APIResponse<?>> handleInvalidFilterException(InvalidFilterException ex) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .msg("Invalid filter value")
+                .subErrors(List.of(ex.getMessage()))
+                .build();
+
+        return buildErrorResponseEntity(apiError);
+    }
+
 
     private ResponseEntity<APIResponse<?>> buildErrorResponseEntity(ApiResponse apiError) {
         return new ResponseEntity<>(new APIResponse<>(apiError),apiError.getStatus());

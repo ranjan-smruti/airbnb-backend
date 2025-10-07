@@ -35,6 +35,9 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
                  AND i.closed = false
                  AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount
                  AND (:star IS NULL OR i.hotel.star IN :star)
+                  AND (:ratings IS NULL OR i.hotel.rating IN :ratings)
+                  AND (:lowPrice IS NULL OR i.price >= :lowPrice)
+                  AND (:highPrice IS NULL OR i.price <= :highPrice)
                  GROUP BY i.hotel, i.room
                  HAVING COUNT(i.date) = :dateCount
            """)
@@ -45,6 +48,9 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
             @Param("roomsCount") Integer roomsCount,
             @Param("dateCount") Long dateCount,
             @Param("star") List<Integer> star,
+            @Param("ratings") List<BigDecimal> ratings,
+            @Param("lowPrice") BigDecimal lowPrice,
+            @Param("highPrice") BigDecimal highPrice,
             Pageable pageable
     );
 

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +17,7 @@ public class HotelPriceResponseDto {
     private String[] photos;
     private String[] amenities;
     private Integer star;
+    private BigDecimal rating;
     private HotelContactInfo contactInfo;
     private Double price;
 }

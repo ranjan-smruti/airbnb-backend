@@ -33,12 +33,12 @@ public class HotelBrowseController {
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
             @RequestParam Integer roomsCount,
-            @RequestParam (required = false) List<Integer> star,
+            @RequestParam(required = false) String nflt,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size)
     {
-        HotelSearchRequest hotelSearchRequest = new HotelSearchRequest(city,startDate,endDate,roomsCount,star,page,size);
-        var pageResult = inventoryService.searchHotels(hotelSearchRequest);
+        HotelSearchRequest hotelSearchRequest = new HotelSearchRequest(city,startDate,endDate,roomsCount,page,size);
+        var pageResult = inventoryService.searchHotels(hotelSearchRequest,nflt);
         return ResponseEntity.ok(pageResult);
     }
 
