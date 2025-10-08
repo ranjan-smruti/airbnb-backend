@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -51,7 +52,8 @@ public class HotelServiceClass implements HotelService {
 
         User user = getCurrentUser();
         hotel.setOwner(user);
-
+        hotel.setRating(BigDecimal.valueOf(0.0));
+        hotel.setReviewCount(0L);
         hotel = hotelRepository.save(hotel);
         log.info("Created a new hotel with id: {} name: {}",hotel.getId(), hotel.getName());
 

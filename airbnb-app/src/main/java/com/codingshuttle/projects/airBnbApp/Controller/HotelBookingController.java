@@ -1,12 +1,11 @@
 package com.codingshuttle.projects.airBnbApp.Controller;
 
-import com.codingshuttle.projects.airBnbApp.DTO.BookingDto;
-import com.codingshuttle.projects.airBnbApp.DTO.BookingPaymentInitResponseDto;
-import com.codingshuttle.projects.airBnbApp.DTO.BookingRequestDTO;
-import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
+import com.codingshuttle.projects.airBnbApp.DTO.*;
+import com.codingshuttle.projects.airBnbApp.Entity.HotelReview;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ApiResponse;
 import com.codingshuttle.projects.airBnbApp.GlobalAPIResponseHandler.APIResponse;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.BookingService;
+import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/bookings")
 public class HotelBookingController {
     private final BookingService bookingService;
+    private final HotelReviewService hotelReviewService;
 
     @PostMapping("/init")
     public ResponseEntity<BookingDto> initializeBooking(@RequestBody BookingRequestDTO bookingRequestDTO){
@@ -55,9 +55,10 @@ public class HotelBookingController {
     }
 
     @PostMapping("{bookingId}/review")
-    public void reviewNRating()
+    public ResponseEntity<BookingReviewResponseDTO> reviewNRating(@PathVariable Long bookingId,
+                                                     @RequestBody BookingReviewDTO bookingReviewDTO)
     {
-        //TODO: Implement the review and rating and calculate the average rating and store in the hotel table.
+       return ResponseEntity.ok(hotelReviewService.submitReview(bookingId,bookingReviewDTO));
     }
 
     private ResponseEntity<APIResponse<?>> buildResponseEntity(ApiResponse apiResponse) {

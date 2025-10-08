@@ -38,8 +38,11 @@ public class Hotel {
     @Column(nullable = false)
     private Integer star;
 
-    @Column(nullable = true, precision = 2, scale = 1)
+    @Column(nullable = false, precision = 2, scale = 1)
     private BigDecimal rating;
+
+    @Column(nullable = false)
+    private Long reviewCount;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
