@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findByUser(User user);
+    boolean existsByNameIgnoreCaseAndUser(String guestName, User user);
 }

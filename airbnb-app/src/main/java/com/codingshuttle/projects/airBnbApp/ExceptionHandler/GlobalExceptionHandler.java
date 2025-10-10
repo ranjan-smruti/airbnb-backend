@@ -126,6 +126,16 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(apiError);
     }
 
+    @ExceptionHandler(DuplicateGuestException.class)
+    public ResponseEntity<APIResponse<?>> handleDuplicateException(DuplicateGuestException ex) {
+        ApiResponse apiError = ApiResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .msg("Duplicate guest list.")
+                .subErrors(List.of(ex.getMessage()))
+                .build();
+
+        return buildErrorResponseEntity(apiError);
+    }
 
     private ResponseEntity<APIResponse<?>> buildErrorResponseEntity(ApiResponse apiError) {
         return new ResponseEntity<>(new APIResponse<>(apiError),apiError.getStatus());

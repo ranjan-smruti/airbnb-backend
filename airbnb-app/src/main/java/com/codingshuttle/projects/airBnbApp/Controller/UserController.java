@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/guests")
-    public ResponseEntity<GuestDto> addNewGuest(@RequestBody GuestDto guestDto) {
+    public ResponseEntity<List<GuestDto>> addNewGuest(@RequestBody List<GuestDto> guestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(guestService.addNewGuest(guestDto));
     }
 
@@ -61,7 +61,7 @@ public class UserController {
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK)
-                .msg("Guest list updated successfully!!")
+                .msg("Guest with id " + guestId + " updated successfully!!")
                 .build();
         return buildResponseEntity(apiResponse);
     }
@@ -72,7 +72,7 @@ public class UserController {
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK)
-                .msg("Guest list deleted successfully!!")
+                .msg("Guest with id " + guestId + " deleted successfully!!")
                 .build();
         return buildResponseEntity(apiResponse);
     }

@@ -1,12 +1,13 @@
 package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.BookingReviewDTO;
-import com.codingshuttle.projects.airBnbApp.DTO.BookingReviewResponseDTO;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelReviewDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.Booking;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.HotelReview;
+import com.codingshuttle.projects.airBnbApp.Entity.User;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.BookingStatus;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.UnauthorizedException;
 import com.codingshuttle.projects.airBnbApp.Repository.BookingRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelRepository;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelReviewRepository;
@@ -20,6 +21,8 @@ import java.lang.module.ResolutionException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
+
 @Service
 @RequiredArgsConstructor
 public class HotelReviewServiceClass implements HotelReviewService {
@@ -29,7 +32,7 @@ public class HotelReviewServiceClass implements HotelReviewService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public BookingReviewResponseDTO submitReview(Long bookingId, BookingReviewDTO bookingReviewDTO)
+    public void submitReview(Long bookingId, BookingReviewDTO bookingReviewDTO)
     {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(()-> new ResolutionException("Booking not found with id " + bookingId));
@@ -38,6 +41,11 @@ public class HotelReviewServiceClass implements HotelReviewService {
         {
             throw new RuntimeException("This booking is either CANCELED/EXPIRED, cannot share review.");
         }
+
+        User user = getCurrentUser();
+
+        if(!user.equals(booking.getUser()))
+            throw new UnauthorizedException("Booking does not belong to this user with id " + user.getId());
 
         if(reviewRepository.existsByBooking_IdAndUser_Id(bookingId,booking.getUser().getId()))
         {
@@ -65,7 +73,5 @@ public class HotelReviewServiceClass implements HotelReviewService {
         hotel.setReviewCount(reviewCount);
 
         hotelRepository.save(hotel);
-
-        return modelMapper.map(hotelReview,BookingReviewResponseDTO.class);
     }
 }

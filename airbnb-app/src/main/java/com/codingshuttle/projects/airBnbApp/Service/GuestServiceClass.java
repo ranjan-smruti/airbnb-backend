@@ -3,6 +3,7 @@ package com.codingshuttle.projects.airBnbApp.Service;
 import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
 import com.codingshuttle.projects.airBnbApp.Entity.Guest;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.ExceptionHandler.DuplicateGuestException;
 import com.codingshuttle.projects.airBnbApp.Repository.GuestRepository;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.GuestService;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import static com.codingshuttle.projects.airBnbApp.Util.AppUtils.getCurrentUser;
@@ -36,14 +38,30 @@ public class GuestServiceClass implements GuestService {
     }
 
     @Override
-    public GuestDto addNewGuest(GuestDto guestDto) {
+    public List<GuestDto> addNewGuest(List<GuestDto> guestDto) {
         log.info("Adding new guest: {}", guestDto);
         User user = getCurrentUser();
-        Guest guest = modelMapper.map(guestDto, Guest.class);
-        guest.setUser(user);
-        Guest savedGuest = guestRepository.save(guest);
-        log.info("Guest added with ID: {}", savedGuest.getId());
-        return modelMapper.map(savedGuest, GuestDto.class);
+
+        List<Guest> guestsToSave = new ArrayList<>();
+
+        for(GuestDto ele : guestDto)
+        {
+            //check if the guest exists with same name
+            if(guestRepository.existsByNameIgnoreCaseAndUser(ele.getName(), user))
+            {
+                log.error("Duplicate guest found: {} for user: {}",ele.getName(),user.getId());
+                throw new DuplicateGuestException("Guest with name " + ele.getName() + " already exists.");
+            }
+            Guest guest = modelMapper.map(ele, Guest.class);
+            guest.setUser(user);
+            guestsToSave.add(guest);
+        }
+
+        guestRepository.saveAll(guestsToSave);
+
+        return guestsToSave.stream()
+                .map(guest -> modelMapper.map(guest, GuestDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override

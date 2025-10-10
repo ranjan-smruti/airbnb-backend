@@ -55,10 +55,16 @@ public class HotelBookingController {
     }
 
     @PostMapping("{bookingId}/review")
-    public ResponseEntity<BookingReviewResponseDTO> reviewNRating(@PathVariable Long bookingId,
+    public ResponseEntity<APIResponse<?>> reviewNRating(@PathVariable Long bookingId,
                                                      @RequestBody BookingReviewDTO bookingReviewDTO)
     {
-       return ResponseEntity.ok(hotelReviewService.submitReview(bookingId,bookingReviewDTO));
+        hotelReviewService.submitReview(bookingId,bookingReviewDTO);
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK)
+                .msg("Thank you for you feedback.!!")
+                .build();
+        return buildResponseEntity(apiResponse);
     }
 
     private ResponseEntity<APIResponse<?>> buildResponseEntity(ApiResponse apiResponse) {

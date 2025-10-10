@@ -74,7 +74,7 @@ public class BookingMonitorService {
     public boolean hasBookingExpired(Booking booking){
         //Booking only active for 10 minutes.
         //so adding of guest list should be with in this window.
-        return booking.getCreatedAt().plusMinutes(2).isBefore(LocalDateTime.now());
+        return booking.getCreatedAt().plusMinutes(15).isBefore(LocalDateTime.now());
     }
 
     @PersistenceContext

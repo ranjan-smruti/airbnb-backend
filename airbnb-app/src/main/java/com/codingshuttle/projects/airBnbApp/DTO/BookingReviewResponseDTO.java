@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class BookingReviewResponseDTO {
     private Long id;
-    private Booking booking;
-    private User user;
+    private Long bookingId;
+    private Long userId;
     private BigDecimal rating;
     private String review;
 }

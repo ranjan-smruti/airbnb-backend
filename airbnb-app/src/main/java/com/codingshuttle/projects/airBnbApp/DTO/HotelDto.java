@@ -15,6 +15,7 @@ public class HotelDto {
     private String[] amenities;
     private Integer star;
     private BigDecimal rating;
+    private Long reviewCount;
     private HotelContactInfo contactInfo;
     private Boolean active;
 }
