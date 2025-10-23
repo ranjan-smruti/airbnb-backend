@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,9 +29,11 @@ public class BookingMonitorService {
     private final BookingRepository bookingRepository;
     private final InventoryRepository inventoryRepository;
 
+    @Async("taskExecutor")
     @Scheduled(cron="${app.scheduling.cron.booking}")
     public void updateBookings()
     {
+        log.info("Executing updateBookings(), {}", Thread.currentThread().getName());
         int page = 0;
         int batchSize = 100;
 
