@@ -4,6 +4,7 @@ import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelInfoRequestDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelPriceResponseDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelSearchRequest;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.SortOrder;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.HotelService;
 import com.codingshuttle.projects.airBnbApp.Service.interfaces.InventoryService;
 import jakarta.validation.Valid;
@@ -35,10 +36,11 @@ public class HotelBrowseController {
             @RequestParam Integer roomsCount,
             @RequestParam(required = false) String nflt,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size)
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "DESC") SortOrder order)
     {
         HotelSearchRequest hotelSearchRequest = new HotelSearchRequest(city,startDate,endDate,roomsCount,page,size);
-        var pageResult = inventoryService.searchHotels(hotelSearchRequest,nflt);
+        var pageResult = inventoryService.searchHotels(hotelSearchRequest,nflt, order);
         return ResponseEntity.ok(pageResult);
     }
 

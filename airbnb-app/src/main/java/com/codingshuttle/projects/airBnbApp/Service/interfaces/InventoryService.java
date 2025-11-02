@@ -2,6 +2,7 @@ package com.codingshuttle.projects.airBnbApp.Service.interfaces;
 
 import com.codingshuttle.projects.airBnbApp.DTO.*;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.SortOrder;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface InventoryService {
     void initializeRoomForAYear(Room room);
     void deleteAllInventories(Room room);
 
-    Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest, String nflt);
+    Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest, String nflt, SortOrder order);
 
     List<InventoryDTO> getAllInventoryByRoom(Long roomId);
 
