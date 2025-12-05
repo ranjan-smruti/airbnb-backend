@@ -4,6 +4,7 @@ import com.codingshuttle.projects.airBnbApp.DTO.*;
 import com.codingshuttle.projects.airBnbApp.Entity.Inventory;
 import com.codingshuttle.projects.airBnbApp.Entity.Room;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import com.codingshuttle.projects.airBnbApp.Entity.enums.SortOrder;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.InvalidFilterException;
 import com.codingshuttle.projects.airBnbApp.ExceptionHandler.ResourceNotFoundException;
 import com.codingshuttle.projects.airBnbApp.Repository.HotelMinPriceRepository;
@@ -16,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,11 +82,19 @@ public class InventoryServiceClass implements InventoryService {
     Group the response by room and get the response by unique hotels.
     * */
     @Override
-    public Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest, String nflt) {
+    public Page<HotelPriceResponseDto> searchHotels(HotelSearchRequest hotelSearchRequest, String nflt, SortOrder order) {
 
         validateRequestFilters(hotelSearchRequest, nflt);
 
-        Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
+        final String SORT_EXPRESSION = "AVG(i.price) ";
+        Sort sort;
+        if (order == SortOrder.ASC) {
+            // JpaSort.unsafe() is needed to pass an aggregate function/expression directly
+            sort = JpaSort.unsafe(Sort.Direction.ASC, SORT_EXPRESSION);
+        } else {
+            sort = JpaSort.unsafe(Sort.Direction.DESC, SORT_EXPRESSION);
+        }
+        Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize(), sort);
 
         long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate()) + 1;
         long daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), hotelSearchRequest.getStartDate());
