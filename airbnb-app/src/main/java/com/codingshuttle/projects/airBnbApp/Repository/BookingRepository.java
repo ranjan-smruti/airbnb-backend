@@ -3,6 +3,7 @@ package com.codingshuttle.projects.airBnbApp.Repository;
 import com.codingshuttle.projects.airBnbApp.Entity.Booking;
 import com.codingshuttle.projects.airBnbApp.Entity.Hotel;
 import com.codingshuttle.projects.airBnbApp.Entity.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -16,5 +17,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByHotelAndCreatedAtBetween(Hotel hotel, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-    List<Booking> findByUser(User user);
+    List<Booking> findByUser(User user, Pageable pageable);
 }

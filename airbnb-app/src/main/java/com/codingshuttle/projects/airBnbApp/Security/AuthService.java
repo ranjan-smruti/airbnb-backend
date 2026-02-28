@@ -68,9 +68,9 @@ public class AuthService {
     public String[] login(LoginDTO loginDTO){
 
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElse(null);
-        if(user == null){
-            throw new RuntimeException("User with email " + loginDTO.getEmail() + " doesn't exists.");
-        }
+//        if(user == null){
+//            throw new RuntimeException("User with email " + loginDTO.getEmail() + " doesn't exists.");
+//        }
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(), loginDTO.getPassword()

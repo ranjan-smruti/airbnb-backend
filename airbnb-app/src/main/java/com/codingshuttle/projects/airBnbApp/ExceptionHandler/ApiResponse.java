@@ -1,5 +1,6 @@
 package com.codingshuttle.projects.airBnbApp.ExceptionHandler;
 
+
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;

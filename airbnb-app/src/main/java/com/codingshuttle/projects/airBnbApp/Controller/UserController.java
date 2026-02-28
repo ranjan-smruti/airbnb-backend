@@ -36,8 +36,9 @@ public class UserController {
     }
 
     @GetMapping("/bookings")
-    public ResponseEntity<List<BookingDto>> getBookings(){
-        return ResponseEntity.ok(bookingService.getBookings());
+    public ResponseEntity<List<BookingDto>> getBookings( @RequestParam(defaultValue = "0") Integer page,
+                                                         @RequestParam(defaultValue = "10") Integer size){
+        return ResponseEntity.ok(bookingService.getBookings(page, size));
     }
 
     @GetMapping("/profile")

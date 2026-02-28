@@ -2,7 +2,6 @@ package com.codingshuttle.projects.airBnbApp.Service;
 
 import com.codingshuttle.projects.airBnbApp.DTO.BookingDto;
 import com.codingshuttle.projects.airBnbApp.DTO.BookingRequestDTO;
-import com.codingshuttle.projects.airBnbApp.DTO.GuestDto;
 import com.codingshuttle.projects.airBnbApp.DTO.HotelReportDTO;
 import com.codingshuttle.projects.airBnbApp.Entity.*;
 import com.codingshuttle.projects.airBnbApp.Entity.enums.BookingStatus;
@@ -22,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -276,10 +278,12 @@ public class BookingServiceClass implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookings() {
+    public List<BookingDto> getBookings(Integer page, Integer size) {
         User user = getCurrentUser();
 
-        return bookingRepository.findByUser(user)
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return bookingRepository.findByUser(user, pageable)
                 .stream()
                 .map((element)->modelMapper.map(element, BookingDto.class))
                 .collect(Collectors.toList());

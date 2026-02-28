@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
         ApiResponse apiError = ApiResponse
                 .builder()
                 .status(HttpStatus.UNAUTHORIZED)
-                .msg(exception.getMessage())
+                .msg(exception.getLocalizedMessage())
                 .build();
         return buildErrorResponseEntity(apiError);
     }
